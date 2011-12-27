@@ -1,0 +1,47 @@
+package AMComponents;
+
+{$R *.res}
+{$R '..\src\UMovControl.dcr'}
+{$ALIGN 8}
+{$ASSERTIONS OFF}
+{$BOOLEVAL OFF}
+{$DEBUGINFO OFF}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS OFF}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION ON}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO OFF}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES OFF}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST OFF}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DESCRIPTION 'Abdelhamid MEDDEB Delphi components'}
+{$LIBSUFFIX '70'}
+{$IMPLICITBUILD OFF}
+{$DEFINE DEMO}
+
+requires
+  rtl,
+  designide,
+  vclactnband,
+  vclx,
+  vcl,
+  vcljpg;
+
+contains
+  UAboutFrm in '..\src\UAboutFrm.pas' {AboutFrm},
+  UCtrlSelector in '..\src\UCtrlSelector.pas',
+  UMovControl in '..\src\UMovControl.pas',
+  UProperties in '..\src\UProperties.pas',
+  UTextRessources in '..\src\UTextRessources.pas',
+  UToolsFrm in '..\src\UToolsFrm.pas' {ToolsFrm};
+
+end.
