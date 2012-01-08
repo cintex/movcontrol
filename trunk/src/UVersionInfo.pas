@@ -2,18 +2,25 @@ unit UVersionInfo;
 
 interface
 {-----------------------------------------------------------------------------------
----------------------- CVS section do not change anythink here ---------------------
+Read version information from binary file
+Copyright (C) 2003  Abdelhamid MEDDEB, abdelhamid@meddeb.net
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation version 3 of the License.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------------------
-
-$Id: UVersionInfo.pas,v 1.1 2003/09/10 18:05:13 abdou Exp $
-
---------------------------------------------------
-
-$Log: UVersionInfo.pas,v $
-Revision 1.1  2003/09/10 18:05:13  abdou
-Creation
+------------------------- Current file revision ------------------------------------
+------------------------------------------------------------------------------------
 $Id$
-
+$Rev$
 -------------------------------------------------------------------------------------}
 
 uses Windows, Classes, SysUtils;
@@ -43,9 +50,10 @@ type
 
 implementation
 
+{$I UDelphiVersions.inc}
+
 {********************************************************************
 Function    : Create
-Date        : February 1, 1999
 Description : Initialize variables
 Inputs      : None
 Outputs     : None
@@ -58,7 +66,6 @@ end;
 
 {********************************************************************
 Function    : GetFileVersion
-Date        : February 3, 1999
 Description : Get the version of an executable file
 Inputs      : sfile - The path/filename of the file to get a
               version for
@@ -89,7 +96,6 @@ end;
 
 {********************************************************************
 Function    : SetDefaultProperties
-Date        : February 1, 1999
 Description : set the properties to their default values
 Inputs      : None.
 Outputs     : None.
@@ -106,7 +112,6 @@ end;
 
 {********************************************************************
 Function    : ReadVersionInfo
-Date        : February 1, 1999
 Description : Read the version and build info from an executable
 Inputs      : sProgram - the name of the file to read
 Outputs     : Major - the major version number
@@ -118,7 +123,7 @@ function TFileVersion.ReadVersionInfo(sProgram: string; Major, Minor,
                                         Release, Build : pWord) :Boolean;
 var
   Info:       PVSFixedFileInfo;
-{$ifdef VER120} {Delphi 4 definition for this differs from D2 & D3}
+{$ifdef D5_ORHIGHER} {Delphi 4 definition for this differs from D2 & D3}
   InfoSize:   Cardinal;
 {$else}
   InfoSize:   UINT;
@@ -161,11 +166,6 @@ begin
     Result := False; {no version info at all in the file}
   end;
 end;
-//VerQueryValue(pBlock,
-//              TEXT('\\StringFileInfo\\040904E4\\FileDescription'),
-//              &lpBuffer,
-//              &dwBytes);
-
 end.
 
-
+

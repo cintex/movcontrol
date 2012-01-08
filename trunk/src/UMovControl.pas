@@ -1,6 +1,27 @@
 unit UMovControl;
 
 interface
+{-----------------------------------------------------------------------------------
+movControl component core
+Copyright (C) 2009  Abdelhamid MEDDEB, abdelhamid@meddeb.net
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation version 3 of the License.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+------------------------------------------------------------------------------------
+------------------------- Current file revision ------------------------------------
+------------------------------------------------------------------------------------
+$Id$
+$Rev$
+-------------------------------------------------------------------------------------}
 
 uses
   SysUtils, Classes,
@@ -64,7 +85,6 @@ type
     procedure SetKeyControl3(const Value: TKeyControl);
     procedure SetActive(const Value: Boolean);
     procedure SetShowGrid(const Value: Boolean);
-    {$ifdef DEMO}
     procedure SaveCtrlParams;
     procedure FillCtrlList;
     property Active : Boolean read FActive write SetActive;
@@ -72,23 +92,18 @@ type
     property ShowTools : Boolean read FShowTools write FShowTools default False;
     property ShowGrid : Boolean read FShowGrid write SetShowGrid default False;
     property MultiSelect : Boolean read FMultiSelect write FMultiSelect default True;
-    {$endif}
   public
     constructor Create(AOwner : TComponent); override;
     destructor Destroy; override;
     procedure MoveAllSelCtrls(const AdX, AdY : integer);
-    {$ifndef DEMO}
     procedure SaveCtrlParams;
     procedure FillCtrlList;
-    {$endif}
   published
-    {$ifndef DEMO}
     property Active : Boolean read FActive write SetActive;
     property GridAlign : Boolean read FGridAlign write FGridAlign default False;
     property ShowTools : Boolean read FShowTools write FShowTools default False;
     property ShowGrid : Boolean read FShowGrid write SetShowGrid default False;
     property MultiSelect : Boolean read FMultiSelect write FMultiSelect default True;
-    {$endif}
     property KeyControl1 : TKeyControl read FKeyControl1 write SetKeyControl1 default kcNone;
     property KeyControl2 : TKeyControl read FKeyControl2 write SetKeyControl2 default kcNone;
     property KeyControl3 : TKeyControl read FKeyControl3 write SetKeyControl3 default kcNone;
@@ -345,16 +360,13 @@ var
 begin
   CurActive := FActive;
   KeyActive(Key, Shift);
-  {$ifdef DEMO}
-  FShowTools := False;
-  {$else}
+
   if FShowTools then FShowTools := not (Key = VK_F4)
                 else FShowTools := (Key = VK_F4);
   FShowTools := FShowTools and FActive;
   DoShowTools(FShowTools);
   if CurActive <> FActive then if FActive and FShowGrid then FPosGrid.Show
                                                         else FPosGrid.Hide;
-  {$endif}
   if not FActive then FCtrlParams.SaveCtrlParams(FCtrlList);
   if Assigned(FOriKeyDown) then FOriKeyDown(Sender, Key, Shift);
 end;
@@ -635,4 +647,4 @@ begin
   RegisterComponents('AMComponents', [TMovControl]);
 end;
 
-end.
+end.
