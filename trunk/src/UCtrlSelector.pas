@@ -640,16 +640,10 @@ procedure TCtrlParams.SaveCtrlParams(ACtrlList: TObjectList);
 var
   IniFile : TIniFile;
   idx: integer;
-  {$ifdef DEMO}
-  idxDemo : integer;
-  {$endif}
   CtrlId : String;
 begin
   IniFile := TIniFile.Create(ParamFileName);
   try
-    {$ifdef DEMO}
-    idxDemo := 1;
-    {$endif}
     for idx := 0 to ACtrlList.Count -1 do
     begin
       CtrlId := Concat(FIdForm, (ACtrlList.Items[idx] as TControl).Name);
@@ -658,10 +652,6 @@ begin
       IniFile.WriteInteger(CtrlId, LEFT_TAG, (ACtrlList.Items[idx] as TControl).Left);
       IniFile.WriteInteger(CtrlId, WIDTH_TAG, (ACtrlList.Items[idx] as TControl).Width);
       IniFile.WriteInteger(CtrlId, HEIGHT_TAG, (ACtrlList.Items[idx] as TControl).Height);
-      {$ifdef DEMO}
-      Inc(idxDemo);
-      if idxDemo = 5 then break;
-      {$endif}
     end;
   finally
     IniFile.Free;

@@ -85,13 +85,9 @@ type
     procedure SetKeyControl3(const Value: TKeyControl);
     procedure SetActive(const Value: Boolean);
     procedure SetShowGrid(const Value: Boolean);
-    procedure SaveCtrlParams;
-    procedure FillCtrlList;
-    property Active : Boolean read FActive write SetActive;
     property GridAlign : Boolean read FGridAlign write FGridAlign default False;
     property ShowTools : Boolean read FShowTools write FShowTools default False;
     property ShowGrid : Boolean read FShowGrid write SetShowGrid default False;
-    property MultiSelect : Boolean read FMultiSelect write FMultiSelect default True;
   public
     constructor Create(AOwner : TComponent); override;
     destructor Destroy; override;
@@ -100,9 +96,6 @@ type
     procedure FillCtrlList;
   published
     property Active : Boolean read FActive write SetActive;
-    property GridAlign : Boolean read FGridAlign write FGridAlign default False;
-    property ShowTools : Boolean read FShowTools write FShowTools default False;
-    property ShowGrid : Boolean read FShowGrid write SetShowGrid default False;
     property MultiSelect : Boolean read FMultiSelect write FMultiSelect default True;
     property KeyControl1 : TKeyControl read FKeyControl1 write SetKeyControl1 default kcNone;
     property KeyControl2 : TKeyControl read FKeyControl2 write SetKeyControl2 default kcNone;
