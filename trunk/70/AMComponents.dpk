@@ -5,14 +5,14 @@ package AMComponents;
 {$ALIGN 8}
 {$ASSERTIONS OFF}
 {$BOOLEVAL OFF}
-{$DEBUGINFO OFF}
+{$DEBUGINFO ON}
 {$EXTENDEDSYNTAX ON}
 {$IMPORTEDDATA ON}
 {$IOCHECKS ON}
-{$LOCALSYMBOLS OFF}
+{$LOCALSYMBOLS ON}
 {$LONGSTRINGS ON}
 {$OPENSTRINGS ON}
-{$OPTIMIZATION ON}
+{$OPTIMIZATION OFF}
 {$OVERFLOWCHECKS OFF}
 {$RANGECHECKS OFF}
 {$REFERENCEINFO OFF}
@@ -26,6 +26,7 @@ package AMComponents;
 {$DESCRIPTION 'Abdelhamid MEDDEB Delphi components'}
 {$LIBSUFFIX '70'}
 {$IMPLICITBUILD OFF}
+{$DEFINE FRENCH}
 
 requires
   rtl,
@@ -41,6 +42,7 @@ contains
   UMovControl in '..\src\UMovControl.pas',
   UProperties in '..\src\UProperties.pas',
   UTextRessources in '..\src\UTextRessources.pas',
-  UToolsFrm in '..\src\UToolsFrm.pas' {ToolsFrm};
+  UToolsFrm in '..\src\UToolsFrm.pas' {ToolsFrm},
+  UVersionInfo in '..\src\UVersionInfo.pas';
 
 end.

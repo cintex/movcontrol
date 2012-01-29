@@ -4,7 +4,7 @@ Version=7.0
 A=8
 B=0
 C=0
-D=0
+D=1
 E=0
 F=0
 G=1
@@ -12,10 +12,10 @@ H=1
 I=1
 J=0
 K=0
-L=0
+L=1
 M=0
 N=1
-O=1
+O=0
 P=1
 Q=0
 R=0
@@ -91,17 +91,17 @@ ImageBase=4194304
 ExeDescription=Abdelhamid MEDDEB Delphi components
 [Directories]
 OutputDir=
-UnitOutputDir=dcu
+UnitOutputDir=bin
 PackageDLLOutputDir=bin
 PackageDCPOutputDir=bin
-SearchPath=D:\development\delphi\DConcept\src
+SearchPath=..\src
 Packages=
-Conditionals=DEMO
+Conditionals=FRENCH
 DebugSourceDirs=
 UsePackages=0
 [Parameters]
 RunParams=
-HostApplication=
+HostApplication=D:\development\tmpmovcontrol\test\bin\TestMovControl.exe
 Launcher=
 UseLauncher=0
 DebugCWD=
@@ -115,7 +115,7 @@ AutoIncBuild=1
 MajorVer=1
 MinorVer=0
 Release=0
-Build=5
+Build=42
 Debug=0
 PreRelease=0
 Special=0
@@ -126,7 +126,7 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=AM (Abdelhamid MEDDEB)
 FileDescription=AM Delphi Components
-FileVersion=1.0.0.5
+FileVersion=1.0.0.42
 InternalName=AMComponents
 LegalCopyright=Abdelhamid MEDDEB
 LegalTrademarks=
@@ -138,17 +138,24 @@ Comments=
 D:\development\AMComponents\Delphi\70\dcu\AMComponents.bpl=(untitled)
 D:\development\delphi\amcomponents\bin\DTools.bpl=(untitled)
 [HistoryLists\hlConditionals]
-Count=1
-Item0=DEMO
+Count=3
+Item0=FRENCH
+Item1=FRENSH
+Item2=DEMO
 [HistoryLists\hlUnitAliases]
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
 [HistoryLists\hlSearchPath]
-Count=1
-Item0=D:\development\delphi\DConcept\src
+Count=2
+Item0=..\src
+Item1=D:\development\delphi\DConcept\src
 [HistoryLists\hlUnitOutputDirectory]
+Count=2
+Item0=bin
+Item1=dcu
+[HistoryLists\hlOutputDirectorry]
 Count=1
-Item0=dcu
+Item0=bin
 [HistoryLists\hlBPLOutput]
 Count=1
 Item0=bin

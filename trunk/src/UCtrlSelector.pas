@@ -2,7 +2,7 @@ unit UCtrlSelector;
 
 interface
 {-----------------------------------------------------------------------------------
-About box
+Controls selection utilities
 Copyright (C) 2003  Abdelhamid MEDDEB, abdelhamid@meddeb.net
 
 This program is free software: you can redistribute it and/or modify

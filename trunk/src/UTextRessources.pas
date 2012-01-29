@@ -25,21 +25,21 @@ $Rev$
 
 resourcestring
 
-  rsCopyrightAM = '#$0169 Abdelhamid MEDDEB';
+  rsCopyrightAM = #0169 + ' Abdelhamid MEDDEB';
 {$ifdef FRENCH}
   rsMovControlAboutTitle = 'A propos de movControl...';
   rsMovControlAboutTxt1 = 'TMovControl est un composant VCL Delphi.';
-  rsMovControlAboutTxt2 = 'C''est la d#$0233clinaison du concept movControl pour la plateforme Win32';
-  rsMovControlAboutTxt3 = 'dans l''IDE de Delphi.';
+  rsMovControlAboutTxt2 = 'C''est la déclinaison du concept movControl pour la plateforme';
+  rsMovControlAboutTxt3 = ' Win32, dans l''IDE de Delphi.';
   rsMovControlAboutTxt4 = 'e-mail à : abdelhamid@meddeb.net';
   rsMovControlAboutTxt5 = 'Visiter: http://www.meddeb.net/movcontrol';
-  rsKeyCtrlMustDifferent = 'KeyControl1, KeyControl2 et KeyControl3 doivent #$0234tre diff#$0233rents.';
-  rsKeyCtrlOneChar = 'Une seule touche de contr#$0244le peut #$0234tre un caract#$0232re alphab#$0233tique.';
+  rsKeyCtrlMustDifferent = 'KeyControl1, KeyControl2 et KeyControl3 doivent être différents.';
+  rsKeyCtrlOneChar = 'Une seule touche de contrôle peut être un caractère alphabétique.';
   rsComponentTitle = 'Composant TMovControl pour Delphi.';
-  rsDemoCapability = 'D#$0233monstration des capacit#$0233s.';
+  rsDemoCapability = 'Démonstration des capacités.';
   rsBtnQuit = 'Quitter';
   rsBtnClose = 'Fermer';
-  rsBtnControlAdd = 'Ajouter des contr#$0244les';
+  rsBtnControlAdd = 'Ajouter des contrôles';
   rsBtnAbout = 'A propos...';
 {$else}
   rsMovControlAboutTitle = 'About movControl...';
@@ -55,4 +55,4 @@ resourcestring
 
 implementation
 
-end.
+end.
