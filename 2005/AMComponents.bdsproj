@@ -19,7 +19,7 @@
 			<Compiler Name="A">8</Compiler>
 			<Compiler Name="B">0</Compiler>
 			<Compiler Name="C">0</Compiler>
-			<Compiler Name="D">0</Compiler>
+			<Compiler Name="D">1</Compiler>
 			<Compiler Name="E">0</Compiler>
 			<Compiler Name="F">0</Compiler>
 			<Compiler Name="G">1</Compiler>
@@ -27,10 +27,10 @@
 			<Compiler Name="I">1</Compiler>
 			<Compiler Name="J">0</Compiler>
 			<Compiler Name="K">0</Compiler>
-			<Compiler Name="L">0</Compiler>
+			<Compiler Name="L">1</Compiler>
 			<Compiler Name="M">0</Compiler>
 			<Compiler Name="N">1</Compiler>
-			<Compiler Name="O">1</Compiler>
+			<Compiler Name="O">0</Compiler>
 			<Compiler Name="P">1</Compiler>
 			<Compiler Name="Q">0</Compiler>
 			<Compiler Name="R">0</Compiler>
@@ -40,7 +40,7 @@
 			<Compiler Name="V">1</Compiler>
 			<Compiler Name="W">0</Compiler>
 			<Compiler Name="X">1</Compiler>
-			<Compiler Name="Y">0</Compiler>
+			<Compiler Name="Y">1</Compiler>
 			<Compiler Name="Z">1</Compiler>
 			<Compiler Name="ShowHints">True</Compiler>
 			<Compiler Name="ShowWarnings">True</Compiler>
@@ -116,12 +116,12 @@
 		</Linker>
 		<Directories>
 			<Directories Name="OutputDir"></Directories>
-			<Directories Name="UnitOutputDir">dcu</Directories>
+			<Directories Name="UnitOutputDir">bin</Directories>
 			<Directories Name="PackageDLLOutputDir">bin</Directories>
 			<Directories Name="PackageDCPOutputDir">bin</Directories>
-			<Directories Name="SearchPath">C:\development\AMComponents\Delphi\src</Directories>
+			<Directories Name="SearchPath">..\src</Directories>
 			<Directories Name="Packages"></Directories>
-			<Directories Name="Conditionals">DEMO</Directories>
+			<Directories Name="Conditionals"></Directories>
 			<Directories Name="DebugSourceDirs"></Directories>
 			<Directories Name="UsePackages">False</Directories>
 		</Directories>
@@ -148,7 +148,7 @@
 			<VersionInfo Name="MajorVer">1</VersionInfo>
 			<VersionInfo Name="MinorVer">0</VersionInfo>
 			<VersionInfo Name="Release">0</VersionInfo>
-			<VersionInfo Name="Build">13</VersionInfo>
+			<VersionInfo Name="Build">15</VersionInfo>
 			<VersionInfo Name="Debug">False</VersionInfo>
 			<VersionInfo Name="PreRelease">False</VersionInfo>
 			<VersionInfo Name="Special">False</VersionInfo>
@@ -158,7 +158,7 @@
 			<VersionInfo Name="CodePage">1252</VersionInfo>
 		</VersionInfo>
 		<VersionInfoKeys>
-			<VersionInfoKeys Name="FileVersion">1.0.0.13</VersionInfoKeys>
+			<VersionInfoKeys Name="FileVersion">1.0.0.15</VersionInfoKeys>
 			<VersionInfoKeys Name="ProductVersion">1.0.0.0</VersionInfoKeys>
 			<VersionInfoKeys Name="CompanyName">AM (Abdelhamid MEDDEB)</VersionInfoKeys>
 			<VersionInfoKeys Name="FileDescription">Abdelhamid MEDDEB Delphi components</VersionInfoKeys>
@@ -167,8 +167,7 @@
 			<VersionInfoKeys Name="LegalTrademarks">Abdelhamid MEDDEB</VersionInfoKeys>
 			<VersionInfoKeys Name="OriginalFilename">AMComponents</VersionInfoKeys>
 			<VersionInfoKeys Name="ProductName">AM Delphi components</VersionInfoKeys>
-		</VersionInfoKeys>  
-    <Excluded_Packages>
+		</VersionInfoKeys>  <Excluded_Packages>
       <Excluded_Packages Name="c:\program files\borland\bds\3.0\Bin\dbwebxprt.bpl">Borland Web Wizard Package</Excluded_Packages>
       <Excluded_Packages Name="c:\program files\borland\bds\3.0\Bin\dcltee90.bpl">TeeChart Components</Excluded_Packages>
     </Excluded_Packages>

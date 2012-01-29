@@ -2,7 +2,7 @@
 A=1
 B=0
 C=0
-D=0
+D=1
 E=0
 F=0
 G=1
@@ -10,10 +10,10 @@ H=1
 I=1
 J=1
 K=0
-L=0
+L=1
 M=0
 N=1
-O=1
+O=0
 P=1
 Q=0
 R=0
@@ -23,7 +23,7 @@ U=0
 V=1
 W=0
 X=1
-Y=0
+Y=1
 Z=1
 ShowHints=1
 ShowWarnings=1
@@ -40,12 +40,12 @@ ImageBase=4194304
 ExeDescription=Abdelhamid MEDDEB Delphi components
 [Directories]
 OutputDir=
-UnitOutputDir=dcu
+UnitOutputDir=bin
 PackageDLLOutputDir=bin
 PackageDCPOutputDir=bin
-SearchPath=C:\development\AMComponents\Delphi\src
+SearchPath=../src
 Packages=
-Conditionals=DEMO
+Conditionals=
 DebugSourceDirs=
 UsePackages=0
 [Parameters]
@@ -61,7 +61,7 @@ AutoIncBuild=1
 MajorVer=1
 MinorVer=0
 Release=0
-Build=23
+Build=28
 Debug=0
 PreRelease=0
 Special=0
@@ -72,7 +72,7 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=AM (Abdelhamid MEDDEB)
 FileDescription=Abdelhamid MEDDEB Delphi components
-FileVersion=1.0.0.23
+FileVersion=1.0.0.28
 InternalName=AMComponents
 LegalCopyright=Abdelhamid MEDDEB
 LegalTrademarks=
@@ -89,13 +89,14 @@ Item2=GestimumGestion;GestimumBuild;GMVisualStyles
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
 [HistoryLists\hlSearchPath]
-Count=2
-Item0=C:\development\AMComponents\Delphi\src
-Item1=src
+Count=3
+Item0=../src
+Item1=C:\development\AMComponents\Delphi\src
+Item2=src
 [HistoryLists\hlUnitOutputDirectory]
 Count=2
-Item0=dcu
-Item1=bin
+Item0=bin
+Item1=dcu
 [HistoryLists\hlOutputDirectorry]
 Count=1
 Item0=bin

@@ -31,12 +31,13 @@ type
 
   TKeyControl = (kcNone, kcCtrl, kcAlt, kcShift, kc_A, kc_B, kc_C, kc_D, kc_E, kc_F, kc_G,
                  kc_H, kc_I, kc_J, kc_K, kc_L, kc_M, kc_N, kc_O, kc_P, kc_Q, kc_R, kc_S,
-                 kc_T, kc_U, kc_V, kv_W, kc_X, kc_Y, kc_Z);
+                 kc_T, kc_U, kc_V, kc_W, kc_X, kc_Y, kc_Z);
 
   TMovControl = class(TComponent)
   private
     FPosGrid : TPosGrid;
     FActive : Boolean;
+    FMovActive : Boolean;
     FShowTools : Boolean;
     FShowGrid : Boolean;
     FGridAlign : Boolean;
@@ -95,7 +96,7 @@ type
     procedure SaveCtrlParams;
     procedure FillCtrlList;
   published
-    property Active : Boolean read FActive write SetActive;
+    property Active : Boolean read FActive write SetActive default True;
     property MultiSelect : Boolean read FMultiSelect write FMultiSelect default True;
     property KeyControl1 : TKeyControl read FKeyControl1 write SetKeyControl1 default kcNone;
     property KeyControl2 : TKeyControl read FKeyControl2 write SetKeyControl2 default kcNone;
@@ -133,7 +134,8 @@ begin
   inherited Create(AOwner);
   SetOwnerForm;
   FCtrlParams := TCtrlParams.Create(FOwnerForm);
-  FActive := False;
+  FActive := True;
+  FMovActive := False;
   FShowTools := False;
   FShowGrid := False;
   FGridAlign := False;
@@ -204,6 +206,7 @@ procedure TMovControl.SetActiveCtrls(AActive : Boolean);
 var
   idx : integer;
 begin
+  if (csDesigning in ComponentState) then Exit;
   for idx := 0 to FCtrlList.Count - 1 do
   begin
     (FCtrlList.Items[idx] as TControl).Enabled := not AActive;
@@ -214,7 +217,7 @@ procedure TMovControl.SetMovingOff(const AButton: TMouseButton; X, Y: Integer);
 var
   dX, dY : integer;
 begin
-  if (not FActive) or (AButton <> mbLeft) or (not Assigned(FCurCtrlSel)) then Exit;
+  if (not FMovActive) or (AButton <> mbLeft) or (not Assigned(FCurCtrlSel)) then Exit;
   dX := X - FXStart;
   dY := Y - FYStart;
   FCurCtrlSel.Left := FCurCtrlSel.Left + dX;
@@ -225,7 +228,7 @@ end;
 
 procedure TMovControl.SetMovingOn(const AButton : TMouseButton; X, Y : Integer);
 begin
-  if (not FActive) or (AButton <> mbLeft) then Exit;
+  if (not FMovActive) or (AButton <> mbLeft) then Exit;
   if Assigned(FCurCtrlSel) then
   begin
     FXStart := X;
@@ -260,14 +263,14 @@ begin
   begin
     if KeyControlIsChar(FKeyControl2) then
     begin
-      FActive := FActive xor ((KeyControl = FKeyControl2) and KeyCtrlInShift(FKeyControl3));
+      FMovActive := FMovActive xor ((KeyControl = FKeyControl2) and KeyCtrlInShift(FKeyControl3));
     end
     else
     if KeyControlIsChar(FKeyControl3) then
     begin
-      FActive := FActive xor ((KeyControl = FKeyControl3) and KeyCtrlInShift(FKeyControl2));
+      FMovActive := FMovActive xor ((KeyControl = FKeyControl3) and KeyCtrlInShift(FKeyControl2));
     end
-    else FActive := FActive xor (KeyCtrlInShift(FKeyControl2) and KeyCtrlInShift(FKeyControl3));
+    else FMovActive := FMovActive xor (KeyCtrlInShift(FKeyControl2) and KeyCtrlInShift(FKeyControl3));
   end;
 
   //2nd case : 101
@@ -275,14 +278,14 @@ begin
   begin
     if KeyControlIsChar(FKeyControl1) then
     begin
-      FActive := FActive xor ((KeyControl = FKeyControl1) and KeyCtrlInShift(FKeyControl3));
+      FMovActive := FMovActive xor ((KeyControl = FKeyControl1) and KeyCtrlInShift(FKeyControl3));
     end
     else
     if KeyControlIsChar(FKeyControl3) then
     begin
-      FActive := FActive xor ((KeyControl = FKeyControl3) and KeyCtrlInShift(FKeyControl1));
+      FMovActive := FMovActive xor ((KeyControl = FKeyControl3) and KeyCtrlInShift(FKeyControl1));
     end
-    else FActive := FActive xor (KeyCtrlInShift(FKeyControl1) and KeyCtrlInShift(FKeyControl3));
+    else FMovActive := FMovActive xor (KeyCtrlInShift(FKeyControl1) and KeyCtrlInShift(FKeyControl3));
   end;
 
   //3rd case : 110
@@ -290,14 +293,14 @@ begin
   begin
     if KeyControlIsChar(FKeyControl1) then
     begin
-      FActive := FActive xor ((KeyControl = FKeyControl1) and KeyCtrlInShift(FKeyControl2));
+      FMovActive := FMovActive xor ((KeyControl = FKeyControl1) and KeyCtrlInShift(FKeyControl2));
     end
     else
     if KeyControlIsChar(FKeyControl2) then
     begin
-      FActive := FActive xor ((KeyControl = FKeyControl2) and KeyCtrlInShift(FKeyControl1));
+      FMovActive := FMovActive xor ((KeyControl = FKeyControl2) and KeyCtrlInShift(FKeyControl1));
     end
-    else FActive := FActive xor (KeyCtrlInShift(FKeyControl1) and KeyCtrlInShift(FKeyControl2));
+    else FMovActive := FMovActive xor (KeyCtrlInShift(FKeyControl1) and KeyCtrlInShift(FKeyControl2));
   end;
 
   //4rd case : 111
@@ -305,31 +308,31 @@ begin
   begin
     if KeyControlIsChar(FKeyControl1) then
     begin
-      FActive := FActive xor ((KeyControl = FKeyControl1) and KeyCtrlInShift(FKeyControl2)
+      FMovActive := FMovActive xor ((KeyControl = FKeyControl1) and KeyCtrlInShift(FKeyControl2)
                               and KeyCtrlInShift(FKeyControl3));
     end
     else
     if KeyControlIsChar(FKeyControl2) then
     begin
-      FActive := FActive xor ((KeyControl = FKeyControl2) and KeyCtrlInShift(FKeyControl1)
+      FMovActive := FMovActive xor ((KeyControl = FKeyControl2) and KeyCtrlInShift(FKeyControl1)
                               and KeyCtrlInShift(FKeyControl3));
     end
     else
     if KeyControlIsChar(FKeyControl3) then
     begin
-      FActive := FActive xor ((KeyControl = FKeyControl3) and KeyCtrlInShift(FKeyControl1)
+      FMovActive := FMovActive xor ((KeyControl = FKeyControl3) and KeyCtrlInShift(FKeyControl1)
                               and KeyCtrlInShift(FKeyControl2));
     end
-    else FActive := FActive xor (KeyCtrlInShift(FKeyControl1) and KeyCtrlInShift(FKeyControl2)
+    else FMovActive := FMovActive xor (KeyCtrlInShift(FKeyControl1) and KeyCtrlInShift(FKeyControl2)
                                  and KeyCtrlInShift(FKeyControl3));
   end;
 
-  if not FActive then
+  if not FMovActive then
   begin
     DoShowTools(False);
     ClearCtrlSelection;
   end;  
-  SetActiveCtrls(FActive);
+  SetActiveCtrls(FMovActive);
 end;
 
 procedure TMovControl.DoShowTools(AActive: Boolean);
@@ -351,16 +354,16 @@ procedure TMovControl.OwnerFormKeyDown(Sender: TObject; var Key: Word;
 var
   CurActive : Boolean;
 begin
-  CurActive := FActive;
+  CurActive := FMovActive;
   KeyActive(Key, Shift);
 
   if FShowTools then FShowTools := not (Key = VK_F4)
                 else FShowTools := (Key = VK_F4);
-  FShowTools := FShowTools and FActive;
+  FShowTools := FShowTools and FMovActive;
   DoShowTools(FShowTools);
-  if CurActive <> FActive then if FActive and FShowGrid then FPosGrid.Show
+  if CurActive <> FMovActive then if FMovActive and FShowGrid then FPosGrid.Show
                                                         else FPosGrid.Hide;
-  if not FActive then FCtrlParams.SaveCtrlParams(FCtrlList);
+  if not FMovActive then FCtrlParams.SaveCtrlParams(FCtrlList);
   if Assigned(FOriKeyDown) then FOriKeyDown(Sender, Key, Shift);
 end;
 
@@ -382,7 +385,7 @@ var
 begin
   dX := X - FXStart;
   dY := Y - FYStart;
-  if (not FActive) or ((dX = 0) and (dY = 0)) then Exit;
+  if (not FMovActive) or ((dX = 0) and (dY = 0)) then Exit;
   if FMoving and Assigned(FCurCtrlSel) then
   begin
     if FShowGrid then
@@ -515,6 +518,21 @@ begin
     Ord('I'), Ord('i') : Result := kc_I;
     Ord('J'), Ord('j') : Result := kc_J;
     Ord('K'), Ord('k') : Result := kc_K;
+    Ord('L'), Ord('l') : Result := kc_L;
+    Ord('M'), Ord('m') : Result := kc_M;
+    Ord('N'), Ord('n') : Result := kc_N;
+    Ord('O'), Ord('o') : Result := kc_O;
+    Ord('P'), Ord('p') : Result := kc_P;
+    Ord('Q'), Ord('q') : Result := kc_Q;
+    Ord('R'), Ord('r') : Result := kc_R;
+    Ord('S'), Ord('s') : Result := kc_S;
+    Ord('T'), Ord('t') : Result := kc_T;
+    Ord('U'), Ord('u') : Result := kc_U;
+    Ord('V'), Ord('v') : Result := kc_V;
+    Ord('W'), Ord('w') : Result := kc_W;
+    Ord('X'), Ord('x') : Result := kc_X;
+    Ord('Y'), Ord('y') : Result := kc_Y;
+    Ord('Z'), Ord('z') : Result := kc_Z;
     else                 Result := kcNone;
   end;
 end;
@@ -523,7 +541,7 @@ function TMovControl.KeyControlIsChar(AKeyControl : TKeyControl): Boolean;
 begin
   Result := AKeyControl in [kc_A, kc_B, kc_C, kc_D, kc_E, kc_F, kc_G, kc_H, kc_I, kc_J,
                             kc_K, kc_L, kc_M, kc_N, kc_O, kc_P, kc_Q, kc_R, kc_S, kc_T,
-                            kc_U, kc_V, kv_W, kc_X, kc_Y, kc_Z];
+                            kc_U, kc_V, kc_W, kc_X, kc_Y, kc_Z];
 end;
 
 procedure TMovControl.SelectControl(AControl: TControl; AShift: TShiftState;
@@ -563,7 +581,7 @@ end;
 procedure TMovControl.SetActive(const Value: Boolean);
 begin
   FActive := Value;
-  SetActiveCtrls(FActive);
+  SetActiveCtrls(FMovActive);
 end;
 
 function TMovControl.CtrlSelected(AControl: TControl): Boolean;
