@@ -1,2 +1,1 @@
-#summary movControl.
-[[roadmap|Roadmap]]
+[[wiki:roadmap|Roadmap]]
