@@ -1,1 +1,1 @@
-[wiki:roadmap|Roadmap]
+[[roadmap|Roadmap]]
