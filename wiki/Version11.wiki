@@ -1,7 +1,7 @@
 #summary Version 1.1.x
 = Version 1.1.x  =
 
-== Date ==
+== Release date ==
 About mid February 2012.
 == Features ==
 Allows the programmer to set the type of components to customize and / or very specific components (selected by name).
