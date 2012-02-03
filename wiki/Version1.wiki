@@ -1,13 +1,26 @@
-#summary One-sentence summary of this page.
+#summary Version 1.0.x
 
-= Features =
+= Version  1.0.x (Current) =
+movControl provides the ability to move and resize any window components that inherit from TWinControl. It is possibe for the programmer:
 
-Add your content here.
+- To set the keyboard to enable or disable the customization mode.
 
+- To enable or disable the component.
 
-= Properties =
+* Published properties.
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+4 properties.
+
+1) *Active*: Boolean
+
+Allows enable (True) or disable (False) customizing components of the form at runtime.
+
+2) *KeyControl1*, *KeyControl2* and *KeyControl3*: Enumeration [kc_Ctrl..kc_Z].
+
+This three properties allow keys control selection for enabling/disabling design mode at runtime by final user. it allows selection of up to three buttons. Those keys can Ctrl, Shift, Alt and  A to Z.
+
+For example, When kc_Ctrl is selected for KeyControl1 and kc_D selected for KeyControl2, final user can hit CTRL-D for enabling design mode and start customizing the form, or disable it when customizing is done.
+
+* Published events.
+
+Nothing, no events defined for this component.
