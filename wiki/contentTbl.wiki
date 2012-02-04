@@ -1,5 +1,5 @@
 *[Introduction The goal of movControl]
 == Project roadmap ==
- * [Version1 Version 1.0.x (Current)]
- * [Version11 Version 1.1.x (Mid Feb. 2012)]
- * [Version12 Version 1.2.x (2 March 2012)]
+ * [Version1 Version 1.0 (Current)]
+ * [Version11 Version 1.1]
+ * [Version12 Version 1.2]
