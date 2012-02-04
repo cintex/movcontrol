@@ -1,5 +1,5 @@
-#summary Version 1.2.x, mid March 2012
-= Version 1.2.x  =
+#summary Version 1.2, mid March 2012
+= Version 1.2 =
 
 == Release date ==
 About mid March 2012.
