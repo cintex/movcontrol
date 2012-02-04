@@ -1,7 +1,14 @@
-#summary Version 1.1.x
+#summary Version 1.1.x, about mid February 2012
 = Version 1.1.x  =
 
 == Release date ==
 About mid February 2012.
-== Features ==
-Allows the programmer to set the type of components to customize and / or very specific components (selected by name).
+== Additional features ==
+Allows programmers to set the type of components to customize and / or specific components (selected by name).
+== Additional published properties ==
+  # List of components types to customize. For example [TLabel, TEdit]
+  # List of components name to customize
+
+Items of those lists are selected from components already used in the form
+== Additional published events ==
+Nothink.
