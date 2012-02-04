@@ -11,4 +11,4 @@ Allows programmers to set the type of components to customize and / or specific 
 
 Items of those lists are selected from components already used in the form
 == Additional published events ==
-Nothink.
+Nothing.
