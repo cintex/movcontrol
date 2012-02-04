@@ -1,6 +1,6 @@
-#summary Version 1.0.x (current version)
+#summary Version 1.0 (current version)
 
-= Version  1.0.x (Current) =
+= Version  1.0 (Current) =
 == Release date ==
 March 2011
 == Features ==
