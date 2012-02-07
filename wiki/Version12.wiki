@@ -11,6 +11,6 @@ Provides tools who help final users in moving and re-dimensioning of the GUI com
   * Display of the current position of selected component.
 == Additional published properties ==
   # *!ActiveTools*: Boolean.Allows enable (True) or disable (False) components customization tools.
-  # *!ActiveToolsKey*: Keyboard key. The key control for enabling/disabling components customization tools by final users. This key can be F2 to F12: (ck_F2 .. ck_F12).
+  # *!ActiveToolsKey*: Keyboard key. The key control for enabling/disabling components customization tools by final users. This key can be F2 to F12: (kc_F2 .. kc_F12).
 == Additional published events ==
 Nothing.
