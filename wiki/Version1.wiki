@@ -11,7 +11,7 @@ movControl provides the ability to move and resize any window components that in
 5 properties.
   # *Active*: Boolean. Allows enable (True) or disable (False) customizing components of the form at runtime.
   # *!KeyControl1*, *!KeyControl2* and *!KeyControl3*: Enumeration (kcCtrl..kc_Z).
-  # *MiltiSelect*: Boolean. Allows (True) several controls selection at design time, or disable it (False).
+  # *!MiltiSelect*: Boolean. Allows (True) several controls selection at design time, or disable it (False).
 
 This three properties allow keys control selection for enabling/disabling design mode at runtime by final user. it allows selection of up to three buttons. Those keys can Ctrl, Shift, Alt and  A to Z.
 
