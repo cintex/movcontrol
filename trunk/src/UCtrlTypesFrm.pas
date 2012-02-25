@@ -19,8 +19,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------------------
 ------------------------- Current file revision ------------------------------------
 ------------------------------------------------------------------------------------
-$Id: $
-$Rev: $
+$Id$
+$Rev$
 -------------------------------------------------------------------------------------}
 
 uses
@@ -67,7 +67,6 @@ begin
   if idxSel >= 0 then
   begin
     lstBoxSelected.Items.Add(lstBoxUnselected.Items[idxSel]);
-    //lstBoxUnselected.DeleteSelected;
     lstBoxUnselected.Items.Delete(idxSel);
   end;
 end;
@@ -90,7 +89,6 @@ begin
   if idxSel >= 0 then
   begin
     lstBoxUnselected.Items.Add(lstBoxSelected.Items[idxSel]);
-    //lstBoxSelected.DeleteSelected;
     lstBoxSelected.Items.Delete(idxSel);
   end;
 end;
