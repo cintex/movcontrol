@@ -2,8 +2,8 @@ unit UCtrlSelector;
 
 interface
 {-----------------------------------------------------------------------------------
-Controls selection utilities
-Copyright (C) 2003  Abdelhamid MEDDEB, abdelhamid@meddeb.net
+Controls selection tools
+Copyright (C) 2009  Abdelhamid MEDDEB, abdelhamid@meddeb.net
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -30,12 +30,19 @@ uses ExtCtrls,
      Messages,
      Registry,
      Contnrs,
-     Controls;
+     Controls,
+     UCtrlTypes;
 
 type
 
   TCtrlPosLocation = (cplNone, cplLeft, cplTopLeft, cplTop, cplTopRight, cplRight,
                       cplBottomRight, cplBottom, cplBottomLeft, cplCenter);
+
+  TActiveContainer  = record
+    Name          : String;
+    OriMouseDown  : TMouseEvent;
+    OriMouseUp    : TMouseEvent;
+  end;
 
   TCtrlProperty = record
     Name      : String;
@@ -83,7 +90,7 @@ type
   private
     FCtrlParent : TWinControl;
     FCtrlSelected : TControl;
-    FPosControl : TComponent;
+    FPosControl : TObject;
     FCtrlCursor : TCursor;
     FCtrlAnchors : TAnchors;
     //FCtrlMouseMove : TMouseMoveEvent;
@@ -114,12 +121,54 @@ type
     procedure Paint; override;
   public
     constructor create(AOwner : TComponent);override;
-    procedure Select(AControl : TControl; APosControl : TComponent);
+    procedure Select(AControl : TControl; APosControl : TObject);
     procedure UnSelect;
     procedure SetMultiSelected;
     property SelCtrlName : String read GetSelCtrlName;
     property LeftPosition : integer read GetLeftPosition;
     property TopPosition : integer read GetTopPosition;
+  end;
+
+  TCtrlSelectMgr = class
+  private
+    FOwnerForm : TForm;
+    FControlTypes : TControlTypes;
+    FActiveContainerList : Array of TActiveContainer;
+    FCtrlList : TObjectList;
+    FSelectorList : TObjectList;
+    FCurCtrlSel : TCtrlSelector;
+    FCtrlParams : TCtrlParams;
+    FOriOwnerFormShow : TNotifyEvent;
+    FOriOwnerFormMouseDown : TMouseEvent;
+    FOriOwnerFormMouseUp : TMouseEvent;
+    FMoving : Boolean;
+    FXStart : Integer;
+    FYStart : Integer;
+    procedure AddActiveContainer(AContainer : TPanel);
+    procedure ActiveContainer(AContainer: TPanel);
+    function ControlByPos(const X, Y : integer) : TControl;
+    function CtrlSelected(AControl : TControl) : Boolean;
+    procedure FillCtrlList;
+    function IsControlReferred(ACtrl: TComponent) : Boolean;
+    function IsMultiSelect : Boolean;
+    procedure OwnerFormShow(Sender : TObject);
+    procedure SelectControl(AControl : TControl; AShift: TShiftState; const X, Y: Integer);
+    procedure SetMovingOn(const X, Y : Integer);
+    procedure SetMovingOff(const X, Y : Integer);
+    procedure ShowCtrlPos;
+  protected
+    procedure MoveAllSelCtrls(const AdX, AdY : integer);
+  public
+    constructor Create(AForm : TForm; ACtrlTypes : TControlTypes);
+    destructor Destroy; override;
+    procedure ClearCtrlSelection;
+    procedure SaveCtrlParams;
+    procedure SetActiveCtrls(AActive : Boolean);
+  published
+    procedure ContainersMouseDown(Sender : TObject; Button: TMouseButton;
+                                  Shift: TShiftState; X, Y: Integer);
+    procedure ContainersMouseUp(Sender : TObject; Button: TMouseButton;
+                                Shift: TShiftState; X, Y: Integer);
   end;
 
   TPosGrid = class
@@ -147,6 +196,7 @@ uses Graphics,
      StdCtrls,
      FileCtrl,
      IniFiles,
+     typinfo,
      SysUtils;
 
 const
@@ -167,7 +217,6 @@ end;
 constructor TCtrlSelector.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
-  if AOwner is TWinControl then Parent := AOwner as TWinControl;
   BevelInner := bvNone;
   BevelOuter := bvNone;
   FMoving := False;
@@ -229,8 +278,9 @@ begin
   else Result := cplNone;
 end;
 
-procedure TCtrlSelector.Select(AControl: TControl; APosControl : TComponent);
+procedure TCtrlSelector.Select(AControl: TControl; APosControl : TObject);
 begin
+  if Assigned(AControl.Parent) then Parent := AControl.Parent;
   Width := AControl.Width + 2 * BevelPos;
   Height := AControl.Height + 2 * BevelPos;
   Left := AControl.Left - BevelPos;
@@ -245,7 +295,7 @@ begin
   Screen.Cursor := crSizeAll;
   AControl.Cursor := crSizeAll;
   FCtrlSelected := AControl;
-  if APosControl is TMovControl then FPosControl := APosControl as TMovControl;
+  if (APosControl is TCtrlSelectMgr) then FPosControl := APosControl as TCtrlSelectMgr;
 end;
 
 procedure TCtrlSelector.MouseMoveEvent(Sender: TObject; Shift: TShiftState; X,Y: Integer);
@@ -296,7 +346,7 @@ begin
       else          begin
                       if FMultiSel and Assigned(FPosControl) then
                       begin
-                        (FPosControl as TMovControl).MoveAllSelCtrls(X - FCurX, Y - FCurY);
+                        (FPosControl as TCtrlSelectMgr).MoveAllSelCtrls(X - FCurX, Y - FCurY);
                       end
                       else
                       begin
@@ -698,6 +748,7 @@ begin
   if Assigned(FOriFormPaint) then FOriFormPaint(FOwnerFrm);
 end;
 
+
 procedure TPosGrid.Hide;
 begin
   FVisible := False;
@@ -717,4 +768,308 @@ begin
   FOwnerFrm.Invalidate;
 end;
 
-end.
+{ TCtrlSelectMgr }
+
+procedure TCtrlSelectMgr.ActiveContainer(AContainer: TPanel);
+var
+  i : integer;
+  MouseDwnMeth, MouseUpMeth : TMethod;
+  function hasChilds(ACtrl : TPanel): Boolean;
+  var
+    j : integer;
+  begin
+    Result := False;
+    for j:= 0 to ACtrl.ControlCount - 1 do
+    begin
+      Result := not (ACtrl.Controls[j] is TPanel);
+      if Result then Break;
+    end;
+  end;
+begin
+  if AContainer.ControlCount = 0 then Exit;
+  for i:= 0 to AContainer.ControlCount - 1 do
+  begin
+    if (AContainer.Controls[i] is TPanel) then
+    begin
+      ActiveContainer(AContainer.Controls[i] as TPanel);
+      if hasChilds(AContainer.Controls[i] as TPanel) then
+      begin
+        AddActiveContainer(AContainer.Controls[i] as TPanel);
+        MouseDwnMeth.Code := MethodAddress('ContainersMouseDown');
+        MouseDwnMeth.Data := Pointer(Self);
+        MouseUpMeth.Code := MethodAddress('ContainersMouseUp');
+        MouseUpMeth.Data := Pointer(Self);
+        SetMethodProp(AContainer.Controls[i], 'OnMouseDown', MouseDwnMeth);
+        SetMethodProp(AContainer.Controls[i], 'OnMouseUp', MouseUpMeth);
+      end;
+    end;
+  end;
+end;
+
+procedure TCtrlSelectMgr.AddActiveContainer(AContainer: TPanel);
+var
+  nb : integer;
+begin
+  nb := Length(FActiveContainerList);
+  Inc(nb);
+  SetLength(FActiveContainerList, nb);
+  FActiveContainerList[nb-1].Name := AContainer.Name;
+  FActiveContainerList[nb-1].OriMouseDown := AContainer.OnMouseDown;
+  FActiveContainerList[nb-1].OriMouseUp := AContainer.OnMouseUp;
+end;
+
+procedure TCtrlSelectMgr.ClearCtrlSelection;
+var
+  idx : integer;
+begin
+  for idx := 0 to FSelectorList.Count - 1 do
+  begin
+    (FSelectorList.Items[idx] as TCtrlSelector).UnSelect;
+  end;
+  FSelectorList.Clear;
+end;
+
+procedure TCtrlSelectMgr.ContainersMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+var
+  CurCtrl : TControl;
+  i : Integer;
+begin
+  if (Button = mbLeft) then
+  begin
+    CurCtrl := ControlByPos(X,Y);
+    SelectControl(CurCtrl, Shift, X, Y);
+    SetMovingOn(X, Y);
+  end;
+  //Call the original event
+  if (Sender is TForm) then
+  begin
+    for i:=0 to Length(FActiveContainerList) - 1 do
+    begin
+      if (Sender is TControl) and
+         (UpperCase(FActiveContainerList[i].Name) = UpperCase((Sender as TControl).Name)) and
+         (Assigned(FActiveContainerList[i].OriMouseDown)) then
+      begin
+        FActiveContainerList[i].OriMouseDown(Sender, Button, Shift, X, Y);
+      end;
+    end;
+  end
+  else if Assigned(FOriOwnerFormMouseDown) then FOriOwnerFormMouseDown(Sender, Button, Shift, X, Y);
+end;
+
+procedure TCtrlSelectMgr.ContainersMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+var
+  i : Integer;
+begin
+  if (Button = mbLeft) then
+  begin
+    SetMovingOff(X, Y);
+    Screen.Cursor := crDefault;
+  end;
+  //Call the original event
+  if (Sender is TForm) then
+  begin
+    for i:=0 to Length(FActiveContainerList) - 1 do
+    begin
+      if (Sender is TControl) and
+         (UpperCase(FActiveContainerList[i].Name) = UpperCase((Sender as TControl).Name)) and
+         (Assigned(FActiveContainerList[i].OriMouseUp)) then
+      begin
+        FActiveContainerList[i].OriMouseUp(Sender, Button, Shift, X, Y);
+      end;
+    end;
+  end
+  else if Assigned(FOriOwnerFormMouseUp) then FOriOwnerFormMouseUp(Sender, Button, Shift, X, Y);
+end;
+
+function TCtrlSelectMgr.ControlByPos(const X, Y: integer): TControl;
+var
+  idx : integer;
+  c : TControl;
+begin
+  Result := nil;
+  for idx := 0 to FCtrlList.Count - 1 do
+  begin
+    c := FCtrlList.Items[idx] as TControl;
+    if (X >= c.Left) and (X <= (c.Left + c.Width)) and
+       (Y >= c.Top) and (Y <= (c.Top + c.Height)) then
+    begin
+      Result := c;
+      Break;
+    end;
+  end;
+end;
+constructor TCtrlSelectMgr.Create(AForm : TForm; ACtrlTypes : TControlTypes);
+begin
+  FOwnerForm := AForm;
+  FOriOwnerFormShow := FOwnerForm.OnShow;
+  FOwnerForm.OnShow := OwnerFormShow;
+  FControlTypes := ACtrlTypes;
+  SetLength(FActiveContainerList, 0);
+  FCtrlList := TObjectList.Create(False);
+  FSelectorList := TObjectList.Create;
+  FCtrlParams := TCtrlParams.Create(FOwnerForm);
+end;
+
+function TCtrlSelectMgr.CtrlSelected(AControl: TControl): Boolean;
+var
+  idx : integer;
+begin
+  Result := False;
+  for idx := 0 to FSelectorList.Count - 1 do
+  begin
+     Result := UpperCase((FSelectorList.Items[idx] as TCtrlSelector).SelCtrlName) = UpperCase(AControl.Name);
+     if Result then Break;
+  end;
+end;
+
+destructor TCtrlSelectMgr.destroy;
+begin
+  FCtrlList.Free;
+  FSelectorList.Free;
+  FCtrlParams.Free;
+  inherited;
+end;
+
+procedure TCtrlSelectMgr.FillCtrlList;
+var
+  idx : integer;
+  Ctrl : TComponent;
+  function IsControlTypeSelected(ACtrl : TComponent): Boolean;
+  var
+    i : integer;
+  begin
+    Result := False;
+    for i:=0 to FControlTypes.Count - 1 do
+    begin
+      Result := UpperCase(FControlTypes.Names[i]) = UpperCase(ACtrl.ClassName);
+      if Result then Break;
+    end;
+  end;
+begin
+  for idx := 0 to FOwnerForm.ComponentCount - 1 do
+  begin
+    Ctrl := FOwnerForm.Components[idx] as TComponent;
+    if IsControlTypeSelected(Ctrl)
+       and
+       not IsControlReferred(Ctrl) then
+    begin
+      FCtrlList.Add(Ctrl);
+    end;
+  end;
+  FCtrlParams.SetCtrlParams(FCtrlList);
+  for idx := 0 to FOwnerForm.ComponentCount - 1 do
+  begin
+    if (FOwnerForm.Components[idx] is TPanel) then
+    begin
+    	ActiveContainer(FOwnerForm.Components[idx] as TPanel);
+    end;
+  end;
+  FOriOwnerFormMouseDown := FOwnerForm.OnMouseDown;
+  FOriOwnerFormMouseUp := FOwnerForm.OnMouseUp;
+  FOwnerForm.OnMouseDown := ContainersMouseDown;
+  FOwnerForm.OnMouseUp := ContainersMouseUp;
+end;
+
+function TCtrlSelectMgr.IsControlReferred(ACtrl: TComponent): Boolean;
+var
+  idx : integer;
+  Ctrl : TComponent;
+begin
+  Result := False;
+  if FCtrlList.Count = 0 then Exit;
+  for idx := 0 to FCtrlList.Count - 1 do
+  begin
+    Ctrl := FCtrlList.Items[idx] as TComponent;
+    Result := UpperCase(ACtrl.Name) = UpperCase(Ctrl.Name);
+    if Result then Break;
+  end;
+end;
+
+function TCtrlSelectMgr.IsMultiSelect: Boolean;
+begin
+  Result := FSelectorList.Count > 1;
+end;
+
+procedure TCtrlSelectMgr.MoveAllSelCtrls(const AdX, AdY: integer);
+var
+  idx : integer;
+  SelCtrl : TCtrlSelector;
+begin
+  for idx := 0 to FSelectorList.Count - 1 do
+  begin
+    SelCtrl := FSelectorList.Items[idx] as TCtrlSelector;
+    SelCtrl.Left := SelCtrl.Left + AdX;
+    SelCtrl.Top := SelCtrl.Top + AdY;
+  end;
+end;
+
+procedure TCtrlSelectMgr.OwnerFormShow(Sender: TObject);
+begin
+  FillCtrlList;
+  if Assigned(FOriOwnerFormShow) then FOriOwnerFormShow(FOwnerForm);
+end;
+
+procedure TCtrlSelectMgr.SaveCtrlParams;
+begin
+  FCtrlParams.SaveCtrlParams(FCtrlList);
+end;
+
+procedure TCtrlSelectMgr.SelectControl(AControl: TControl; AShift: TShiftState; const X, Y: Integer);
+begin
+  if (not (ssShift in AShift)) or
+     (not Assigned(AControl)) then ClearCtrlSelection;
+  if Assigned(AControl) and (not CtrlSelected(AControl)) then
+  begin
+    FCurCtrlSel := TCtrlSelector.Create(AControl.Parent);
+    FCurCtrlSel.Select(AControl, Self);
+    FSelectorList.Add(FCurCtrlSel);
+    if IsMultiSelect then
+    begin
+      FCurCtrlSel.SetMultiSelected;
+      (FSelectorList.Items[0] as TCtrlSelector).SetMultiSelected;
+    end;
+  end;
+end;
+
+procedure TCtrlSelectMgr.SetActiveCtrls(AActive: Boolean);
+var
+  idx : integer;
+begin
+  for idx := 0 to FCtrlList.Count - 1 do
+  begin
+    (FCtrlList.Items[idx] as TControl).Enabled := not AActive;
+  end;
+end;
+
+procedure TCtrlSelectMgr.SetMovingOff(const X,Y: Integer);
+var
+  dX, dY : integer;
+begin
+  if (not FMoving) or (not Assigned(FCurCtrlSel)) then Exit;
+  dX := X - FXStart;
+  dY := Y - FYStart;
+  FCurCtrlSel.Left := FCurCtrlSel.Left + dX;
+  FCurCtrlSel.Top := FCurCtrlSel.Top + dY;
+  FCurCtrlSel := nil;
+  FMoving := False;
+end;
+
+procedure TCtrlSelectMgr.SetMovingOn(const X,Y: Integer);
+begin
+  if Assigned(FCurCtrlSel) then
+  begin
+    FXStart := X;
+    FYStart := Y;
+    FMoving := True;
+    ShowCtrlPos;
+  end
+  else FMoving := False;
+end;
+
+procedure TCtrlSelectMgr.ShowCtrlPos;
+begin
+  //if not FShowTools or not Assigned(FToolsFrm) or not Assigned(FCurCtrlSel) then Exit;
+  //FToolsFrm.lblXY.Caption := IntToStr(FCurCtrlSel.LeftPosition) + ':' + IntToStr(FCurCtrlSel.TopPosition);
+end;
+
+end.

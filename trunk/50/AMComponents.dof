@@ -59,9 +59,9 @@ RootDir=
 IncludeVerInfo=1
 AutoIncBuild=1
 MajorVer=1
-MinorVer=0
+MinorVer=1
 Release=0
-Build=28
+Build=2
 Debug=0
 PreRelease=0
 Special=0
@@ -72,7 +72,7 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=AM (Abdelhamid MEDDEB)
 FileDescription=Abdelhamid MEDDEB Delphi components
-FileVersion=1.0.0.28
+FileVersion=1.1.0.2
 InternalName=AMComponents
 LegalCopyright=Abdelhamid MEDDEB
 LegalTrademarks=
@@ -80,23 +80,21 @@ OriginalFilename=AMComponents
 ProductName=AMComponents
 ProductVersion=1.0.0.0
 Comments=AM Delphi components
-[HistoryLists\hlConditionals]
-Count=3
-Item0=DEMO
-Item1=FRENCH
-Item2=GestimumGestion;GestimumBuild;GMVisualStyles
 [HistoryLists\hlUnitAliases]
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
 [HistoryLists\hlSearchPath]
-Count=3
-Item0=../src
-Item1=C:\development\AMComponents\Delphi\src
-Item2=src
+Count=7
+Item0=src;D:\development\movcontrol\70\bin
+Item1=src
+Item2=..\src
+Item3=src;D:\development\testMovControl\bin
+Item4=src;D:\development\movcontrol\src
+Item5=src;D:\development\movcontrol\70\bin;C:\Program Files\Borland\Delphi7\Source\ToolsAPI
+Item6=src;D:\development\movcontrol\70\bin;C:\Program Files\Borland\Delphi7\Source
 [HistoryLists\hlUnitOutputDirectory]
-Count=2
+Count=1
 Item0=bin
-Item1=dcu
 [HistoryLists\hlOutputDirectorry]
 Count=1
 Item0=bin

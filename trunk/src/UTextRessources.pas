@@ -38,9 +38,13 @@ resourcestring
   rsComponentTitle = 'Composant TMovControl pour Delphi.';
   rsDemoCapability = 'Démonstration des capacités.';
   rsBtnQuit = 'Quitter';
+  rsBtnCancel = 'Annnuler';
   rsBtnClose = 'Fermer';
   rsBtnControlAdd = 'Ajouter des contrôles';
   rsBtnAbout = 'A propos...';
+  rsCtrlTypesPresent = 'Types des contrôles disponibles';
+  rsActiveCtrlTypes = 'Types des contrôles sélectionnés';
+  rsCtrlTypesEditorTitle = 'Sélection des types de contrôles';
 {$else}
   rsMovControlAboutTitle = 'About movControl...';
   rsMovControlAboutTxt1 = 'TMovControl is a Delphi VCL component.';
@@ -51,6 +55,9 @@ resourcestring
   rsKeyCtrlMustDifferent = 'KeyControl1, KeyControl2, KeyControl3 must be differents';
   rsKeyCtrlOneChar = 'Only one Keycontrol can be a character';
   rsDemoCapability = 'Capability demonstration.';
+  rsCtrlTypesPresent = 'Controls types availables';
+  rsActiveCtrlTypes = 'Selected controls types';
+  rsCtrlTypesEditorTitle = 'Controls types selection';
 {$endif}
 
 implementation

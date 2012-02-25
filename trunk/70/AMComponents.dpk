@@ -25,8 +25,8 @@ package AMComponents;
 {$IMAGEBASE $400000}
 {$DESCRIPTION 'Abdelhamid MEDDEB Delphi components'}
 {$LIBSUFFIX '70'}
+{$DESIGNONLY}
 {$IMPLICITBUILD OFF}
-{$DEFINE FRENCH}
 
 requires
   rtl,
@@ -42,7 +42,8 @@ contains
   UMovControl in '..\src\UMovControl.pas',
   UProperties in '..\src\UProperties.pas',
   UTextRessources in '..\src\UTextRessources.pas',
-  UToolsFrm in '..\src\UToolsFrm.pas' {ToolsFrm},
-  UVersionInfo in '..\src\UVersionInfo.pas';
+  UVersionInfo in '..\src\UVersionInfo.pas',
+  UCtrlTypesFrm in '..\src\UCtrlTypesFrm.pas' {CtrlTypeFrm},
+  UCtrlTypes in '..\src\UCtrlTypes.pas';
 
 end.

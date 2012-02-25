@@ -24,8 +24,12 @@ $Rev$
 -------------------------------------------------------------------------------------}
 
 uses
-  SysUtils, Classes,
-  Controls, Contnrs, Forms, UToolsFrm, UCtrlSelector;
+  Classes,
+  Controls,
+  Forms,
+  {UToolsFrm,}
+  UCtrlSelector,
+  UCtrlTypes;
 
 type
 
@@ -41,46 +45,22 @@ type
     FShowTools : Boolean;
     FShowGrid : Boolean;
     FGridAlign : Boolean;
+    FControlTypes : TControlTypes;
     FKeyControl1 : TKeyControl;
     FKeyControl2 : TKeyControl;
     FKeyControl3 : TKeyControl;
-    FCtrlList : TObjectList;
-    FSelectorList : TObjectList;
-    FCurCtrlSel : TCtrlSelector;
-    FMultiSelect : Boolean;
-    FMoving : Boolean;
-    FXStart : Integer;
-    FYStart : Integer;
     FOwnerForm : TForm;
     FOriKeyDown : TKeyEvent;
-    FOriMouseDown : TMouseEvent;
-    FOriMouseUp : TMouseEvent;
-    FOriMouseMove : TMouseMoveEvent;
-    FOriFormShow : TNotifyEvent;
-    FToolsFrm : TToolsFrm;
-    FCtrlParams : TCtrlParams;
-    function CtrlSelected(AControl : TControl) : Boolean;
-    function IsMultiSelect : Boolean;
-    function IsControlReferred(ACtrl: TControl) : Boolean;
+    //FToolsFrm : TToolsFrm;
+    FCtrlSelectMgr : TCtrlSelectMgr;
     function KeyControlIsChar(AKeyControl : TKeyControl) : Boolean;
-    function ControlByPos(const X, Y : integer) : TControl;
-    procedure DoShowTools(AActive : Boolean = True);
+    //procedure DoShowTools(AActive : Boolean = True);
     procedure SetOwnerForm;
+    procedure ReadCtrlTypes(Reader : TReader);
+    procedure WriteCtrlTypes(Writer : TWriter);
     procedure OwnerFormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
-    procedure OwnerFormMouseDown(Sender : TObject; Button: TMouseButton;
-                                 Shift: TShiftState; X, Y: Integer);
-    procedure OwnerFormMouseUp(Sender : TObject; Button: TMouseButton;
-                               Shift: TShiftState; X, Y: Integer);
-    procedure OwnerFormMouseMove(Sender : TObject; Shift: TShiftState; X, Y: Integer);
-    procedure OwnerFormShow(Sender : TObject);
     function VKToKeyControl(const AVKKey : Word) : TKeyControl;
-    procedure SetActiveCtrls(AActive : Boolean);
-    procedure SelectControl(AControl : TControl; AShift: TShiftState; const X, Y: Integer);
-    procedure SetMovingOn(const AButton : TMouseButton; X, Y : Integer);
-    procedure SetMovingOff(const AButton : TMouseButton; X, Y : Integer);
-    procedure ShowCtrlPos;
     procedure KeyActive(const AKey : Word; AShift : TShiftState);
-    procedure ClearCtrlSelection;
     procedure SetKeyControl1(const Value: TKeyControl);
     procedure SetKeyControl2(const Value: TKeyControl);
     procedure SetKeyControl3(const Value: TKeyControl);
@@ -89,76 +69,48 @@ type
     property GridAlign : Boolean read FGridAlign write FGridAlign default False;
     property ShowTools : Boolean read FShowTools write FShowTools default False;
     property ShowGrid : Boolean read FShowGrid write SetShowGrid default False;
+  protected
+    procedure DefineProperties(Filer: TFiler); override;
   public
     constructor Create(AOwner : TComponent); override;
     destructor Destroy; override;
-    procedure MoveAllSelCtrls(const AdX, AdY : integer);
-    procedure SaveCtrlParams;
-    procedure FillCtrlList;
   published
     property Active : Boolean read FActive write SetActive default True;
-    property MultiSelect : Boolean read FMultiSelect write FMultiSelect default True;
+    property ControlTypes : TControlTypes read FControlTypes write FControlTypes;
     property KeyControl1 : TKeyControl read FKeyControl1 write SetKeyControl1 default kcNone;
     property KeyControl2 : TKeyControl read FKeyControl2 write SetKeyControl2 default kcNone;
     property KeyControl3 : TKeyControl read FKeyControl3 write SetKeyControl3 default kcNone;
   end;
 
-procedure Register;
 
 implementation
 
-uses Windows, StdCtrls, Dialogs, UTextRessources;
+uses Windows,
+     Dialogs,
+     UTextRessources;
 
 { TMovControl }
-
-function TMovControl.ControlByPos(const X, Y: integer): TControl;
-var
-  idx : integer;
-  c : TControl;
-begin
-  Result := nil;
-  for idx := 0 to FCtrlList.Count - 1 do
-  begin
-    c := FCtrlList.Items[idx] as TControl;
-    if (X >= c.Left) and (X <= (c.Left + c.Width)) and
-       (Y >= c.Top) and (Y <= (c.Top + c.Height)) then
-    begin
-      Result := c;
-      Break;
-    end;
-  end;
-end;
 
 constructor TMovControl.Create(AOwner : TComponent);
 begin
   inherited Create(AOwner);
   SetOwnerForm;
-  FCtrlParams := TCtrlParams.Create(FOwnerForm);
   FActive := True;
   FMovActive := False;
   FShowTools := False;
   FShowGrid := False;
   FGridAlign := False;
-  FMultiSelect := True;
+  FControlTypes := TControlTypes.Create(FOwnerForm);
   if not (csDesigning in ComponentState) then
   begin
-    FCtrlList := TObjectList.Create(False);
     if Assigned(FOwnerForm) then
     begin
       FPosGrid := TPosGrid.Create(FOwnerForm);
       FOriKeyDown := FOwnerForm.OnKeyDown;
-      FOriMouseDown := FOwnerForm.OnMouseDown;
-      FOriMouseUp := FOwnerForm.OnMouseUp;
-      FOriMouseMove := FOwnerForm.OnMouseMove;
-      FOriFormShow := FOwnerForm.OnShow;
       FOwnerForm.OnKeyDown := OwnerFormKeyDown;
-      FOwnerForm.OnMouseDown := OwnerFormMouseDown;
-      FOwnerForm.OnMouseUp := OwnerFormMouseUp;
-      FOwnerForm.OnMouseMove := OwnerFormMouseMove;
-      FOwnerForm.OnShow := OwnerFormShow;
+      FCtrlSelectMgr := TCtrlSelectMgr.Create(FOwnerForm, FControlTypes);
       FOwnerForm.KeyPreview := True;
     end;
-    FSelectorList := TObjectList.Create;
   end;
 end;
 
@@ -169,74 +121,13 @@ begin
     if Assigned(FOwnerForm) then
     begin
       FOwnerForm.OnKeyDown := FOriKeyDown;
-      FOwnerForm.OnMouseDown := FOriMouseDown;
-      FOwnerForm.OnMouseUp := FOriMouseUp;
-      FOwnerForm.OnMouseMove := FOriMouseMove;
     end;
     FOwnerForm := nil;
-    FCtrlList.Free;
-    FSelectorList.Free;
     FPosGrid.Free;
-  end
-  else FCtrlParams.Free;
+    FCtrlSelectMgr.Free;
+  end;
+  FControlTypes.Free;
   inherited;
-end;
-
-procedure TMovControl.FillCtrlList;
-var
-  idx : integer;
-  Ctrl : TControl;
-begin
-  for idx := 0 to FOwnerForm.ControlCount - 1 do
-  begin
-    Ctrl := FOwnerForm.Controls[idx] as TControl;
-    if ((Ctrl is TEdit) or
-       (Ctrl is TLabel) or
-       (Ctrl is TListBox) or
-       (Ctrl is TMemo))
-       and
-       not IsControlReferred(Ctrl) then
-    begin
-      FCtrlList.Add(Ctrl);
-    end;
-  end;
-end;
-
-procedure TMovControl.SetActiveCtrls(AActive : Boolean);
-var
-  idx : integer;
-begin
-  if (csDesigning in ComponentState) then Exit;
-  for idx := 0 to FCtrlList.Count - 1 do
-  begin
-    (FCtrlList.Items[idx] as TControl).Enabled := not AActive;
-  end;
-end;
-
-procedure TMovControl.SetMovingOff(const AButton: TMouseButton; X, Y: Integer);
-var
-  dX, dY : integer;
-begin
-  if (not FMovActive) or (AButton <> mbLeft) or (not Assigned(FCurCtrlSel)) then Exit;
-  dX := X - FXStart;
-  dY := Y - FYStart;
-  FCurCtrlSel.Left := FCurCtrlSel.Left + dX;
-  FCurCtrlSel.Top := FCurCtrlSel.Top + dY;
-  FCurCtrlSel := nil;
-  FMoving := False;
-end;
-
-procedure TMovControl.SetMovingOn(const AButton : TMouseButton; X, Y : Integer);
-begin
-  if (not FMovActive) or (AButton <> mbLeft) then Exit;
-  if Assigned(FCurCtrlSel) then
-  begin
-    FXStart := X;
-    FYStart := Y;
-    FMoving := True;
-    ShowCtrlPos;
-  end
-  else FMoving := False;
 end;
 
 procedure TMovControl.KeyActive(const AKey: Word; AShift: TShiftState);
@@ -254,6 +145,7 @@ var
   end;
 
 begin
+  if (csDesigning in ComponentState) then Exit;
   if (FKeyControl1 = kcNone) and (FKeyControl2 = kcNone) and (KeyControl3 = kcNone) then Exit;
   KeyControl := VKToKeyControl(AKey);
   if KeyControl = kcNone then Exit;
@@ -326,16 +218,18 @@ begin
     else FMovActive := FMovActive xor (KeyCtrlInShift(FKeyControl1) and KeyCtrlInShift(FKeyControl2)
                                  and KeyCtrlInShift(FKeyControl3));
   end;
-
-  if not FMovActive then
+  if not (csDesigning in ComponentState) then
   begin
-    DoShowTools(False);
-    ClearCtrlSelection;
-  end;  
-  SetActiveCtrls(FMovActive);
+    if not FMovActive then
+    begin
+      //DoShowTools(False);
+      FCtrlSelectMgr.ClearCtrlSelection;
+    end;
+    FCtrlSelectMgr.SetActiveCtrls(FMovActive);
+  end;
 end;
 
-procedure TMovControl.DoShowTools(AActive: Boolean);
+{procedure TMovControl.DoShowTools(AActive: Boolean);
 begin
   if AActive then
   begin
@@ -347,7 +241,7 @@ begin
     end;
   end
   else FreeAndNil(FToolsFrm);
-end;
+end;}
 
 procedure TMovControl.OwnerFormKeyDown(Sender: TObject; var Key: Word;
                                        Shift: TShiftState);
@@ -360,66 +254,14 @@ begin
   if FShowTools then FShowTools := not (Key = VK_F4)
                 else FShowTools := (Key = VK_F4);
   FShowTools := FShowTools and FMovActive;
-  DoShowTools(FShowTools);
+  //DoShowTools(FShowTools);
   if CurActive <> FMovActive then if FMovActive and FShowGrid then FPosGrid.Show
-                                                        else FPosGrid.Hide;
-  if not FMovActive then FCtrlParams.SaveCtrlParams(FCtrlList);
-  if Assigned(FOriKeyDown) then FOriKeyDown(Sender, Key, Shift);
-end;
-
-procedure TMovControl.OwnerFormMouseDown(Sender: TObject; Button: TMouseButton;
-                                         Shift: TShiftState; X, Y: Integer);
-var
-  CurCtrl : TControl;
-begin
-  CurCtrl := ControlByPos(X,Y);
-  SelectControl(CurCtrl, Shift, X, Y);
-  SetMovingOn(Button, X, Y);
-  if Assigned(FOriMouseDown) then FOriMouseDown(Sender, Button, Shift, X, Y);
-end;
-
-procedure TMovControl.OwnerFormMouseMove(Sender: TObject; Shift: TShiftState;
-                                         X, Y: Integer);
-var
-  dX, dY : integer;
-begin
-  dX := X - FXStart;
-  dY := Y - FYStart;
-  if (not FMovActive) or ((dX = 0) and (dY = 0)) then Exit;
-  if FMoving and Assigned(FCurCtrlSel) then
+                                                              else FPosGrid.Hide;
+  if not (csDesigning in ComponentState) then
   begin
-    if FShowGrid then
-    begin
-      FCurCtrlSel.Left := FCurCtrlSel.Left + dX;
-      if (FCurCtrlSel.Left mod FPosGrid.Step) > 0 then
-      begin
-        if dX > 0 then FCurCtrlSel.Left := ((FCurCtrlSel.Left div FPosGrid.Step) + 1) * FPosGrid.Step
-                  else FCurCtrlSel.Left := (FCurCtrlSel.Left div FPosGrid.Step) * FPosGrid.Step;
-      end;
-      FCurCtrlSel.Top := FCurCtrlSel.Top + dY;
-      if (FCurCtrlSel.Top mod FPosGrid.Step) > 0 then
-      begin
-        if dY > 0 then FCurCtrlSel.Top := ((FCurCtrlSel.Top div FPosGrid.Step) + 1) * FPosGrid.Step
-                  else FCurCtrlSel.Top := (FCurCtrlSel.Top div FPosGrid.Step) * FPosGrid.Step;
-      end;
-    end
-    else
-    begin
-      FCurCtrlSel.Left := FCurCtrlSel.Left + dX;
-      FCurCtrlSel.Top := FCurCtrlSel.Top + dY;
-    end;
-    ShowCtrlPos;
-    FXStart := X;
-    FYStart := Y;
+    if not FMovActive then FCtrlSelectMgr.SaveCtrlParams;
+    if Assigned(FOriKeyDown) then FOriKeyDown(Sender, Key, Shift);
   end;
-end;
-
-procedure TMovControl.OwnerFormMouseUp(Sender: TObject; Button: TMouseButton;
-                                       Shift: TShiftState; X, Y: Integer);
-begin
-  SetMovingOff(Button, X, Y);
-  Screen.Cursor := crDefault;
-  if Assigned(FOriMouseUp) then FOriMouseUp(Sender, Button, Shift, X, Y);
 end;
 
 procedure TMovControl.SetOwnerForm;
@@ -544,70 +386,12 @@ begin
                             kc_U, kc_V, kc_W, kc_X, kc_Y, kc_Z];
 end;
 
-procedure TMovControl.SelectControl(AControl: TControl; AShift: TShiftState;
-                                    const X, Y: Integer);
-begin
-  if (not FMultiSelect) or (not (ssShift in AShift)) or
-     (not Assigned(AControl)) then ClearCtrlSelection;
-  if Assigned(AControl) and (not CtrlSelected(AControl)) then
-  begin
-    FCurCtrlSel := TCtrlSelector.Create(FOwnerForm);
-    FCurCtrlSel.Select(AControl, Self);
-    FSelectorList.Add(FCurCtrlSel);
-    if IsMultiSelect then
-    begin
-      FCurCtrlSel.SetMultiSelected;
-      (FSelectorList.Items[0] as TCtrlSelector).SetMultiSelected;
-    end;
-  end;
-end;
-
-function TMovControl.IsMultiSelect: Boolean;
-begin
-  Result := FSelectorList.Count > 1;
-end;
-
-procedure TMovControl.ClearCtrlSelection;
-var
-  idx : integer;
-begin
-  for idx := 0 to FSelectorList.Count - 1 do
-  begin
-    (FSelectorList.Items[idx] as TCtrlSelector).UnSelect;
-  end;
-  FSelectorList.Clear;
-end;
-
 procedure TMovControl.SetActive(const Value: Boolean);
 begin
   FActive := Value;
-  SetActiveCtrls(FMovActive);
-end;
-
-function TMovControl.CtrlSelected(AControl: TControl): Boolean;
-var
-  idx : integer;
-begin
-  Result := False;
-  for idx := 0 to FSelectorList.Count - 1 do
+  if not (csDesigning in ComponentState) then
   begin
-     Result := UpperCase((FSelectorList.Items[idx] as TCtrlSelector).SelCtrlName) =
-               UpperCase(AControl.Name);
-     if Result then Break;
-  end;
-end;
-
-procedure TMovControl.MoveAllSelCtrls(const AdX, AdY: integer);
-var
-  idx : integer;
-  SelCtrl : TCtrlSelector;
-begin
-  if not FMultiSelect then Exit;
-  for idx := 0 to FSelectorList.Count - 1 do
-  begin
-    SelCtrl := FSelectorList.Items[idx] as TCtrlSelector;
-    SelCtrl.Left := SelCtrl.Left + AdX;
-    SelCtrl.Top := SelCtrl.Top + AdY;
+    FCtrlSelectMgr.SetActiveCtrls(FMovActive);
   end;
 end;
 
@@ -621,41 +405,33 @@ begin
   end;
 end;
 
-procedure TMovControl.ShowCtrlPos;
+procedure TMovControl.DefineProperties(Filer: TFiler);
 begin
-  if not FShowTools or not Assigned(FToolsFrm) or not Assigned(FCurCtrlSel) then Exit;
-  FToolsFrm.lblXY.Caption := IntToStr(FCurCtrlSel.LeftPosition) + ':' + IntToStr(FCurCtrlSel.TopPosition);
+  inherited DefineProperties(Filer);
+  Filer.DefineProperty('CtrlTypes', ReadCtrlTypes, WriteCtrlTypes, True);
 end;
 
-procedure TMovControl.SaveCtrlParams;
-begin
-  FCtrlParams.SaveCtrlParams(FCtrlList);
-end;
-
-procedure TMovControl.OwnerFormShow(Sender: TObject);
-begin
-  FillCtrlList;
-  FCtrlParams.SetCtrlParams(FCtrlList); //set controls parameters
-end;
-
-function TMovControl.IsControlReferred(ACtrl: TControl): Boolean;
+procedure TMovControl.WriteCtrlTypes(Writer: TWriter);
 var
-  idx : integer;
-  Ctrl : TControl;
+  i: integer;
 begin
-  Result := False;
-  if FCtrlList.Count = 0 then Exit;
-  for idx := 0 to FCtrlList.Count - 1 do
+  Writer.WriteListBegin;
+  for i:=0 to FControlTypes.Count - 1 do
   begin
-    Ctrl := FCtrlList.Items[idx] as TControl;
-    Result := ACtrl.Name = Ctrl.Name;
-    if Result then Break;
+    Writer.WriteString(FControlTypes.Names[i]);
   end;
+  Writer.WriteListEnd;
 end;
 
-procedure Register;
+procedure TMovControl.ReadCtrlTypes(Reader: TReader);
 begin
-  RegisterComponents('AMComponents', [TMovControl]);
+  FControlTypes.Clear;
+  Reader.ReadListBegin;
+  while not Reader.EndOfList do
+  begin
+    FControlTypes.Add(Reader.ReadString);
+  end;
+  Reader.ReadListEnd;
 end;
 
-end.
+end.
