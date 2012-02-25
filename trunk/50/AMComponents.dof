@@ -84,14 +84,15 @@ Comments=AM Delphi components
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
 [HistoryLists\hlSearchPath]
-Count=7
-Item0=src;D:\development\movcontrol\70\bin
-Item1=src
-Item2=..\src
-Item3=src;D:\development\testMovControl\bin
-Item4=src;D:\development\movcontrol\src
-Item5=src;D:\development\movcontrol\70\bin;C:\Program Files\Borland\Delphi7\Source\ToolsAPI
-Item6=src;D:\development\movcontrol\70\bin;C:\Program Files\Borland\Delphi7\Source
+Count=8
+Item0=../src
+Item1=src;D:\development\movcontrol\70\bin
+Item2=src
+Item3=..\src
+Item4=src;D:\development\testMovControl\bin
+Item5=src;D:\development\movcontrol\src
+Item6=src;D:\development\movcontrol\70\bin;C:\Program Files\Borland\Delphi7\Source\ToolsAPI
+Item7=src;D:\development\movcontrol\70\bin;C:\Program Files\Borland\Delphi7\Source
 [HistoryLists\hlUnitOutputDirectory]
 Count=1
 Item0=bin
