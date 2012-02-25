@@ -25,6 +25,7 @@ package AMComponents;
 {$IMAGEBASE $400000}
 {$DESCRIPTION 'AM Delphi components'}
 {$LIBSUFFIX '90'}
+{$DESIGNONLY}
 {$IMPLICITBUILD OFF}
 
 requires
@@ -40,6 +41,10 @@ contains
   UCtrlSelector in '..\src\UCtrlSelector.pas',
   UMovControl in '..\src\UMovControl.pas',
   UProperties in '..\src\UProperties.pas',
-  UTextRessources in '..\src\UTextRessources.pas';
+  UTextRessources in '..\src\UTextRessources.pas',
+  UCtrlListEditor in '..\src\UCtrlListEditor.pas',
+  UCtrlTypes in '..\src\UCtrlTypes.pas',
+  UCtrlTypesFrm in '..\src\UCtrlTypesFrm.pas',
+  UVersionInfo in '..\src\UVersionInfo.pas';
 
 end.

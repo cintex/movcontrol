@@ -25,7 +25,7 @@ $Rev$
 
 {$I UDelphiVersions.inc}
 
-uses Classes,
+uses Classes, Forms,
      {$ifdef D6_ORHIGHER} DesignIntf, DesignEditors
      {$else} DsgnIntf
      {$endif}
@@ -40,15 +40,30 @@ type
     procedure ExecuteVerb(index : integer); override;
   end;
 
+  TCtrlTypesProperty = class(TClassProperty)
+  public
+    procedure Edit; override;
+    function GetAttributes : TPropertyAttributes; override;
+  end;
+
 procedure Register;
 
 implementation
 
-uses UMovControl, UAboutFrm, UTextRessources;
+uses UMovControl,
+     UAboutFrm,
+     UCtrlTypesFrm,
+     Controls,
+     UTextRessources,
+     UCtrlTypes,
+     SysUtils,
+     StdCtrls;
 
 procedure Register;
 begin
+  RegisterComponents('AMComponents', [TMovControl]);
   RegisterComponentEditor(TMovControl, TMovControlProperty);
+  RegisterPropertyEditor(TypeInfo(TControlTypes), nil, '', TCtrlTypesProperty);
 end;
 
 { TMovControlProperty }
@@ -70,5 +85,44 @@ function TMovControlProperty.GetVerbCount: integer;
 begin
   Result := 2;
 end;
+
+{ TCtrlTypesProperty }
+
+procedure TCtrlTypesProperty.Edit;
+var
+  CtrlTypes : TControlTypes;
+  CtrlTypeEditor : TCtrlTypeFrm;
+  i, idx : integer;
+begin
+  inherited;
+  CtrlTypes := TControlTypes(GetOrdValue);
+  CtrlTypeEditor := TCtrlTypeFrm.Create(nil);
+  try
+    CtrlTypes.Availables(CtrlTypeEditor.lstBoxUnselected.Items);
+    CtrlTypeEditor.lstBoxSelected.Clear;
+    for i:=0 to CtrlTypes.Count - 1 do
+    begin
+      idx := CtrlTypeEditor.lstBoxUnselected.Items.IndexOf(CtrlTypes.Names[i]);
+      if idx >= 0 then CtrlTypeEditor.lstBoxUnselected.Items.Delete(idx);
+      CtrlTypeEditor.lstBoxSelected.Items.Add(CtrlTypes.Names[i]);
+    end;
+    if CtrlTypeEditor.ShowModal = mrOk then
+    begin
+      CtrlTypes.Clear;
+      for i:=0 to CtrlTypeEditor.lstBoxSelected.Items.Count - 1 do
+      begin
+        CtrlTypes.Add(CtrlTypeEditor.lstBoxSelected.Items[i]);
+      end;
+    end;
+  finally
+    CtrlTypeEditor.Free;
+  end;
+end;
+
+function TCtrlTypesProperty.GetAttributes: TPropertyAttributes;
+begin
+  Result := [paDialog, paSubProperties];
+end;
+
 
 end.
