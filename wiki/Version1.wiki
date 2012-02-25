@@ -1,4 +1,4 @@
-#summary Version 1.0 (current version)
+#summary Version 1.0
 
 = Version  1.0 (Current) =
 == Release date ==
