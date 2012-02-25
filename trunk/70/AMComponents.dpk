@@ -44,6 +44,7 @@ contains
   UTextRessources in '..\src\UTextRessources.pas',
   UVersionInfo in '..\src\UVersionInfo.pas',
   UCtrlTypesFrm in '..\src\UCtrlTypesFrm.pas' {CtrlTypeFrm},
-  UCtrlTypes in '..\src\UCtrlTypes.pas';
+  UCtrlTypes in '..\src\UCtrlTypes.pas',
+  UToolsFrm in '..\src\UToolsFrm.pas' {ToolsFrm};
 
 end.
