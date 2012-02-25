@@ -13,6 +13,9 @@ object CtrlTypeFrm: TCtrlTypeFrm
   Font.Style = []
   OldCreateOrder = False
   OnShow = FormShow
+  DesignSize = (
+    497
+    383)
   PixelsPerInch = 96
   TextHeight = 13
   object lblUnselected: TLabel
