@@ -45,6 +45,9 @@ resourcestring
   rsCtrlTypesPresent = 'Types des contrôles disponibles';
   rsActiveCtrlTypes = 'Types des contrôles sélectionnés';
   rsCtrlTypesEditorTitle = 'Sélection des types de contrôles';
+  rsCtrlTypesPresent = 'Noms des contrôles disponibles';
+  rsActiveCtrlTypes = 'Noms des contrôles sélectionnés';
+  rsCtrlTypesEditorTitle = 'Sélection des Noms de contrôles';
 {$else}
   rsMovControlAboutTitle = 'About movControl...';
   rsMovControlAboutTxt1 = 'TMovControl is a Delphi VCL component.';
@@ -58,6 +61,9 @@ resourcestring
   rsCtrlTypesPresent = 'Controls types availables';
   rsActiveCtrlTypes = 'Selected controls types';
   rsCtrlTypesEditorTitle = 'Controls types selection';
+  rsCtrlNamesPresent = 'Controls names availables';
+  rsActiveCtrlNames = 'Selected controls names';
+  rsCtrlNamesEditorTitle = 'Controls names selection';
 {$endif}
 
 implementation

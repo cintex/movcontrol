@@ -15,6 +15,9 @@ object AboutFrm: TAboutFrm
   Position = poScreenCenter
   OnClose = FormClose
   OnCreate = FormCreate
+  DesignSize = (
+    353
+    181)
   PixelsPerInch = 96
   TextHeight = 13
   object lblAbout1: TLabel
@@ -118,7 +121,7 @@ object AboutFrm: TAboutFrm
       Top = 8
       Width = 241
       Height = 18
-      Caption = 'TMovControl component for Delphi™.'
+      Caption = 'TMovControl component for Delphi'#8482'.'
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
       Font.Height = -15
@@ -176,7 +179,7 @@ object AboutFrm: TAboutFrm
       Left = 72
       Top = 32
       Width = 3
-      Height = 17
+      Height = 16
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
       Font.Height = -13

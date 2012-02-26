@@ -1,4 +1,4 @@
-object CtrlTypeFrm: TCtrlTypeFrm
+object ControlsEditFrm: TControlsEditFrm
   Left = 322
   Top = 178
   BorderStyle = bsDialog
@@ -13,9 +13,6 @@ object CtrlTypeFrm: TCtrlTypeFrm
   Font.Style = []
   OldCreateOrder = False
   OnShow = FormShow
-  DesignSize = (
-    497
-    383)
   PixelsPerInch = 96
   TextHeight = 13
   object lblUnselected: TLabel

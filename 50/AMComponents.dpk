@@ -40,7 +40,8 @@ contains
   UProperties in '..\src\UProperties.pas',
   UTextRessources in '..\src\UTextRessources.pas',
   UVersionInfo in '..\src\UVersionInfo.pas',
-  UCtrlTypesFrm in '..\src\UCtrlTypesFrm.pas' {CtrlTypeFrm},
-  UCtrlTypes in '..\src\UCtrlTypes.pas';
+  UCtrlTypes in '..\src\UCtrlTypes.pas',
+  UControlsEditFrm in '..\src\UControlsEditFrm.pas' {ControlsEditFrm},
+  UCtrlNames in '..\src\UCtrlNames.pas';
 
 end.

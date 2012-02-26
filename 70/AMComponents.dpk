@@ -43,8 +43,9 @@ contains
   UProperties in '..\src\UProperties.pas',
   UTextRessources in '..\src\UTextRessources.pas',
   UVersionInfo in '..\src\UVersionInfo.pas',
-  UCtrlTypesFrm in '..\src\UCtrlTypesFrm.pas' {CtrlTypeFrm},
+  UControlsEditFrm in '..\src\UControlsEditFrm.pas' {ControlsEditFrm},
   UCtrlTypes in '..\src\UCtrlTypes.pas',
-  UToolsFrm in '..\src\UToolsFrm.pas' {ToolsFrm};
+  UToolsFrm in '..\src\UToolsFrm.pas' {ToolsFrm},
+  UCtrlNames in '..\src\UCtrlNames.pas';
 
 end.

@@ -1,8 +1,8 @@
-unit UCtrlTypes;
+unit UCtrlNames;
 
 interface
 {-----------------------------------------------------------------------------------
-Manager of Control types used by movControl
+Manager of Control names used by movControl
 Copyright (C) 2012  Abdelhamid MEDDEB, abdelhamid@meddeb.net
 
 This program is free software: you can redistribute it and/or modify
@@ -19,8 +19,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ------------------------------------------------------------------------------------
 ------------------------- Current file revision ------------------------------------
 ------------------------------------------------------------------------------------
-$Id$
-$Rev$
+$Id $
+$Rev $
 -------------------------------------------------------------------------------------}
 
 uses Forms,
@@ -28,17 +28,17 @@ uses Forms,
 
 type
 
-  TControlTypes = class(TPersistent)
+  TControlNames = class(TPersistent)
   private
     FOwnerForm : TForm;
-    FCtrlTypeList : TStringList;
+    FCtrlNameList : TStringList;
     function GetCount: integer;
     function GetName(index: integer): String;
   public
     constructor Create(AOwnerForm : TForm);
     destructor Destroy; override;
-    procedure Add(ACtrlType : String);
-    procedure Availables(ACtrlTypeNames : TStrings);
+    procedure Add(ACtrlName : String);
+    procedure Availables(ACtrlNames : TStrings);
     procedure Clear;
     property Names[index: integer] : String read GetName;
     property Count : integer read GetCount;
@@ -46,37 +46,25 @@ type
 
 implementation
 
-uses SysUtils,
-     ExtCtrls,
+uses Controls,
      ComCtrls,
      StdCtrls,
-     Controls;
+     ExtCtrls;
 
-{ TControlTypes }
+{ TControlNames }
 
-procedure TControlTypes.Add(ACtrlType: String);
+procedure TControlNames.Add(ACtrlName: String);
 begin
-  FCtrlTypeList.Add(ACtrlType);
+  FCtrlNameList.Add(ACtrlName);
 end;
 
-procedure TControlTypes.Availables(ACtrlTypeNames: TStrings);
+procedure TControlNames.Availables(ACtrlNames: TStrings);
 var
   i : integer;
   ChildCtrl : TControl;
-  function AlreadyExists(const ACtrlTypeName : String) : Boolean;
-  var
-    j : integer;
-  begin
-    Result := False;
-    for j:=0 to ACtrlTypeNames.Count - 1 do
-    begin
-      Result := UpperCase(ACtrlTypeName) = UpperCase(ACtrlTypeNames.Strings[j]);
-      if Result then Exit;
-    end;
-  end;
 begin
-  if not Assigned(ACtrlTypeNames) then Exit;
-  ACtrlTypeNames.Clear;
+  if not Assigned(ACtrlNames) then Exit;
+  ACtrlNames.Clear;
   for i := 0 to FOwnerForm.ComponentCount - 1 do
   begin
     if (FOwnerForm.Components[i] is TControl) then
@@ -84,37 +72,36 @@ begin
       ChildCtrl := FOwnerForm.Components[i] as TControl;
       if not(ChildCtrl is TPanel) and
          not(ChildCtrl is TGroupBox) and
-         not(ChildCtrl is TPageControl) and
-         not AlreadyExists(ChildCtrl.ClassName) then ACtrlTypeNames.Add(ChildCtrl.ClassName);
+         not(ChildCtrl is TPageControl) then ACtrlNames.Add(ChildCtrl.Name);
     end;
   end;
 end;
 
-procedure TControlTypes.Clear;
+procedure TControlNames.Clear;
 begin
-  FCtrlTypeList.Clear;
+  FCtrlNameList.Clear;
 end;
 
-constructor TControlTypes.Create(AOwnerForm : TForm);
+constructor TControlNames.Create(AOwnerForm: TForm);
 begin
   FOwnerForm := AOwnerForm;
-  FCtrlTypeList := TStringList.Create;
+  FCtrlNameList := TStringList.Create;
 end;
 
-destructor TControlTypes.Destroy;
+destructor TControlNames.Destroy;
 begin
-  FCtrlTypeList.Free;
+  FCtrlNameList.Free;
   inherited;
 end;
 
-function TControlTypes.GetCount: integer;
+function TControlNames.GetCount: integer;
 begin
-  Result := FCtrlTypeList.Count;
+  Result := FCtrlNameList.Count;
 end;
 
-function TControlTypes.GetName(index: integer): String;
+function TControlNames.GetName(index: integer): String;
 begin
-  Result := FCtrlTypeList.Strings[index];
+  Result := FCtrlNameList.Strings[index];
 end;
 
 end.
