@@ -46,16 +46,23 @@ type
     function GetAttributes : TPropertyAttributes; override;
   end;
 
+  TCtrlNamesProperty = class(TClassProperty)
+  public
+    procedure Edit; override;
+    function GetAttributes : TPropertyAttributes; override;
+  end;
+
 procedure Register;
 
 implementation
 
 uses UMovControl,
      UAboutFrm,
-     UCtrlTypesFrm,
+     UControlsEditFrm,
      Controls,
      UTextRessources,
      UCtrlTypes,
+     UCtrlNames,
      SysUtils,
      StdCtrls;
 
@@ -63,7 +70,8 @@ procedure Register;
 begin
   RegisterComponents('AMComponents', [TMovControl]);
   RegisterComponentEditor(TMovControl, TMovControlProperty);
-  RegisterPropertyEditor(TypeInfo(TControlTypes), nil, '', TCtrlTypesProperty);
+  RegisterPropertyEditor(TypeInfo(TControlTypes), TMovControl, 'ControlTypes', TCtrlTypesProperty);
+  RegisterPropertyEditor(TypeInfo(TControlNames), TMovControl, 'ControlNames', TCtrlNamesProperty);
 end;
 
 { TMovControlProperty }
@@ -91,12 +99,13 @@ end;
 procedure TCtrlTypesProperty.Edit;
 var
   CtrlTypes : TControlTypes;
-  CtrlTypeEditor : TCtrlTypeFrm;
+  CtrlTypeEditor : TControlsEditFrm;
   i, idx : integer;
 begin
   inherited;
   CtrlTypes := TControlTypes(GetOrdValue);
-  CtrlTypeEditor := TCtrlTypeFrm.Create(nil);
+  CtrlTypeEditor := TControlsEditFrm.Create(nil);
+  CtrlTypeEditor.EditType(ctedType);
   try
     CtrlTypes.Availables(CtrlTypeEditor.lstBoxUnselected.Items);
     CtrlTypeEditor.lstBoxSelected.Clear;
@@ -121,8 +130,46 @@ end;
 
 function TCtrlTypesProperty.GetAttributes: TPropertyAttributes;
 begin
-  Result := [paDialog, paSubProperties];
+  Result := [paDialog];
 end;
 
+{ TCtrlNamesProperty }
 
-end.
+procedure TCtrlNamesProperty.Edit;
+var
+  CtrlNames : TControlNames;
+  CtrlNameEditor : TControlsEditFrm;
+  i, idx : integer;
+begin
+  inherited;
+  CtrlNames := TControlNames(GetOrdValue);
+  CtrlNameEditor := TControlsEditFrm.Create(nil);
+  CtrlNameEditor.EditType(ctedName);
+  try
+    CtrlNames.Availables(CtrlNameEditor.lstBoxUnselected.Items);
+    CtrlNameEditor.lstBoxSelected.Clear;
+    for i:=0 to CtrlNames.Count - 1 do
+    begin
+      idx := CtrlNameEditor.lstBoxUnselected.Items.IndexOf(CtrlNames.Names[i]);
+      if idx >= 0 then CtrlNameEditor.lstBoxUnselected.Items.Delete(idx);
+      CtrlNameEditor.lstBoxSelected.Items.Add(CtrlNames.Names[i]);
+    end;
+    if CtrlNameEditor.ShowModal = mrOk then
+    begin
+      CtrlNames.Clear;
+      for i:=0 to CtrlNameEditor.lstBoxSelected.Items.Count - 1 do
+      begin
+        CtrlNames.Add(CtrlNameEditor.lstBoxSelected.Items[i]);
+      end;
+    end;
+  finally
+    CtrlNameEditor.Free;
+  end;
+end;
+
+function TCtrlNamesProperty.GetAttributes: TPropertyAttributes;
+begin
+  Result := [paDialog];
+end;
+
+end.

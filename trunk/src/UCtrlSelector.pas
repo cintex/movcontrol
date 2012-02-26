@@ -31,7 +31,8 @@ uses ExtCtrls,
      Registry,
      Contnrs,
      Controls,
-     UCtrlTypes;
+     UCtrlTypes,
+     UCtrlNames;
 
 type
 
@@ -133,6 +134,7 @@ type
   private
     FOwnerForm : TForm;
     FControlTypes : TControlTypes;
+    FControlNames : TControlNames;
     FActiveContainerList : Array of TActiveContainer;
     FCtrlList : TObjectList;
     FSelectorList : TObjectList;
@@ -144,8 +146,8 @@ type
     FMoving : Boolean;
     FXStart : Integer;
     FYStart : Integer;
-    procedure AddActiveContainer(AContainer : TPanel);
-    procedure ActiveContainer(AContainer: TPanel);
+    procedure AddActiveContainer(AContainer : TControl);
+    procedure ActiveContainer(AContainer: TComponent);
     function ControlByPos(const X, Y : integer) : TControl;
     function CtrlSelected(AControl : TControl) : Boolean;
     procedure FillCtrlList;
@@ -159,7 +161,8 @@ type
   protected
     procedure MoveAllSelCtrls(const AdX, AdY : integer);
   public
-    constructor Create(AForm : TForm; ACtrlTypes : TControlTypes);
+    constructor Create(AForm : TForm; ACtrlTypes : TControlTypes;
+                       ACtrlNames : TControlNames);
     destructor Destroy; override;
     procedure ClearCtrlSelection;
     procedure SaveCtrlParams;
@@ -194,6 +197,7 @@ implementation
 uses Graphics,
      UMovControl,
      StdCtrls,
+     ComCtrls,
      FileCtrl,
      IniFiles,
      typinfo,
@@ -637,16 +641,19 @@ begin
   try
     for idx := 0 to ACtrlList.Count -1 do
     begin
-      CtrlId := Concat(FIdForm, (ACtrlList.Items[idx] as TControl).Name);
-      CtrlId := HashCode(CtrlId);
-      Value := IniFile.ReadInteger(CtrlId, TOP_TAG, -1);
-      if Value > 0 then (ACtrlList.Items[idx] as TControl).Top := Value;
-      Value := IniFile.ReadInteger(CtrlId, LEFT_TAG, -1);
-      if Value > 0 then (ACtrlList.Items[idx] as TControl).Left := Value;
-      Value := IniFile.ReadInteger(CtrlId, WIDTH_TAG, -1);
-      if Value > 0 then (ACtrlList.Items[idx] as TControl).Width := Value;
-      Value := IniFile.ReadInteger(CtrlId, HEIGHT_TAG, -1);
-      if Value > 0 then (ACtrlList.Items[idx] as TControl).Height := Value;
+      if (ACtrlList.Items[idx] is TControl) then
+      begin
+        CtrlId := Concat(FIdForm, (ACtrlList.Items[idx] as TControl).Name);
+        CtrlId := HashCode(CtrlId);
+        Value := IniFile.ReadInteger(CtrlId, TOP_TAG, -1);
+        if Value > 0 then (ACtrlList.Items[idx] as TControl).Top := Value;
+        Value := IniFile.ReadInteger(CtrlId, LEFT_TAG, -1);
+        if Value > 0 then (ACtrlList.Items[idx] as TControl).Left := Value;
+        Value := IniFile.ReadInteger(CtrlId, WIDTH_TAG, -1);
+        if Value > 0 then (ACtrlList.Items[idx] as TControl).Width := Value;
+        Value := IniFile.ReadInteger(CtrlId, HEIGHT_TAG, -1);
+        if Value > 0 then (ACtrlList.Items[idx] as TControl).Height := Value;
+      end;
     end;
   finally
     IniFile.Free;
@@ -696,12 +703,15 @@ begin
   try
     for idx := 0 to ACtrlList.Count -1 do
     begin
-      CtrlId := Concat(FIdForm, (ACtrlList.Items[idx] as TControl).Name);
-      CtrlId := HashCode(CtrlId);
-      IniFile.WriteInteger(CtrlId, TOP_TAG, (ACtrlList.Items[idx] as TControl).Top);
-      IniFile.WriteInteger(CtrlId, LEFT_TAG, (ACtrlList.Items[idx] as TControl).Left);
-      IniFile.WriteInteger(CtrlId, WIDTH_TAG, (ACtrlList.Items[idx] as TControl).Width);
-      IniFile.WriteInteger(CtrlId, HEIGHT_TAG, (ACtrlList.Items[idx] as TControl).Height);
+      if (ACtrlList.Items[idx] is TControl) then
+      begin
+        CtrlId := Concat(FIdForm, (ACtrlList.Items[idx] as TControl).Name);
+        CtrlId := HashCode(CtrlId);
+        IniFile.WriteInteger(CtrlId, TOP_TAG, (ACtrlList.Items[idx] as TControl).Top);
+        IniFile.WriteInteger(CtrlId, LEFT_TAG, (ACtrlList.Items[idx] as TControl).Left);
+        IniFile.WriteInteger(CtrlId, WIDTH_TAG, (ACtrlList.Items[idx] as TControl).Width);
+        IniFile.WriteInteger(CtrlId, HEIGHT_TAG, (ACtrlList.Items[idx] as TControl).Height);
+      end;
     end;
   finally
     IniFile.Free;
@@ -770,52 +780,75 @@ end;
 
 { TCtrlSelectMgr }
 
-procedure TCtrlSelectMgr.ActiveContainer(AContainer: TPanel);
+procedure TCtrlSelectMgr.ActiveContainer(AContainer: TComponent);
 var
   i : integer;
   MouseDwnMeth, MouseUpMeth : TMethod;
-  function hasChilds(ACtrl : TPanel): Boolean;
+  function hasChilds(ACtrl : TWinControl): Boolean;
   var
     j : integer;
+    ChildCtrl : TControl;
   begin
     Result := False;
-    for j:= 0 to ACtrl.ControlCount - 1 do
+    for j := 0 to ACtrl.ControlCount - 1 do
     begin
-      Result := not (ACtrl.Controls[j] is TPanel);
+      ChildCtrl := ACtrl.Controls[j];
+      Result := not(ChildCtrl is TPanel) and
+                not(ChildCtrl is TGroupBox) and
+                not(ChildCtrl is TPageControl);
       if Result then Break;
     end;
   end;
 begin
-  if AContainer.ControlCount = 0 then Exit;
-  for i:= 0 to AContainer.ControlCount - 1 do
+  if not(AContainer is TPanel) and
+     not(AContainer is TGroupBox) and
+     not(AContainer is TPageControl) then Exit;
+  if (AContainer as TWinControl).ControlCount = 0 then Exit;
+  if hasChilds(AContainer as TWinControl) then
   begin
-    if (AContainer.Controls[i] is TPanel) then
+    AddActiveContainer(AContainer as TControl);
+    MouseDwnMeth.Code := MethodAddress('ContainersMouseDown');
+    MouseDwnMeth.Data := Pointer(Self);
+    MouseUpMeth.Code := MethodAddress('ContainersMouseUp');
+    MouseUpMeth.Data := Pointer(Self);
+    SetMethodProp(AContainer, 'OnMouseDown', MouseDwnMeth);
+    SetMethodProp(AContainer, 'OnMouseUp', MouseUpMeth);
+  end
+  else
+  begin
+    for i:= 0 to (AContainer as TWinControl).ControlCount - 1 do
     begin
-      ActiveContainer(AContainer.Controls[i] as TPanel);
-      if hasChilds(AContainer.Controls[i] as TPanel) then
-      begin
-        AddActiveContainer(AContainer.Controls[i] as TPanel);
-        MouseDwnMeth.Code := MethodAddress('ContainersMouseDown');
-        MouseDwnMeth.Data := Pointer(Self);
-        MouseUpMeth.Code := MethodAddress('ContainersMouseUp');
-        MouseUpMeth.Data := Pointer(Self);
-        SetMethodProp(AContainer.Controls[i], 'OnMouseDown', MouseDwnMeth);
-        SetMethodProp(AContainer.Controls[i], 'OnMouseUp', MouseUpMeth);
-      end;
+      ActiveContainer((AContainer as TWinControl).Controls[i]);
     end;
   end;
 end;
 
-procedure TCtrlSelectMgr.AddActiveContainer(AContainer: TPanel);
+procedure TCtrlSelectMgr.AddActiveContainer(AContainer: TControl);
 var
   nb : integer;
 begin
+  if not(AContainer is TPanel) and
+     not(AContainer is TGroupBox) and
+     not(AContainer is TPageControl) then Exit;
   nb := Length(FActiveContainerList);
   Inc(nb);
   SetLength(FActiveContainerList, nb);
   FActiveContainerList[nb-1].Name := AContainer.Name;
-  FActiveContainerList[nb-1].OriMouseDown := AContainer.OnMouseDown;
-  FActiveContainerList[nb-1].OriMouseUp := AContainer.OnMouseUp;
+  if AContainer is TPanel then
+  begin
+    FActiveContainerList[nb-1].OriMouseDown := (AContainer as TPanel).OnMouseDown;
+    FActiveContainerList[nb-1].OriMouseUp := (AContainer as TPanel).OnMouseUp;
+  end;
+  if AContainer is TGroupBox then
+  begin
+    FActiveContainerList[nb-1].OriMouseDown := (AContainer as TGroupBox).OnMouseDown;
+    FActiveContainerList[nb-1].OriMouseUp := (AContainer as TGroupBox).OnMouseUp;
+  end;
+  if AContainer is TPageControl then
+  begin
+    FActiveContainerList[nb-1].OriMouseDown := (AContainer as TPageControl).OnMouseDown;
+    FActiveContainerList[nb-1].OriMouseUp := (AContainer as TPageControl).OnMouseUp;
+  end;
 end;
 
 procedure TCtrlSelectMgr.ClearCtrlSelection;
@@ -841,7 +874,7 @@ begin
     SetMovingOn(X, Y);
   end;
   //Call the original event
-  if (Sender is TForm) then
+  if not (Sender is TForm) then
   begin
     for i:=0 to Length(FActiveContainerList) - 1 do
     begin
@@ -898,12 +931,14 @@ begin
     end;
   end;
 end;
-constructor TCtrlSelectMgr.Create(AForm : TForm; ACtrlTypes : TControlTypes);
+constructor TCtrlSelectMgr.Create(AForm : TForm; ACtrlTypes : TControlTypes;
+                                  ACtrlNames : TControlNames);
 begin
   FOwnerForm := AForm;
   FOriOwnerFormShow := FOwnerForm.OnShow;
   FOwnerForm.OnShow := OwnerFormShow;
   FControlTypes := ACtrlTypes;
+  FControlNames := ACtrlNames;
   SetLength(FActiveContainerList, 0);
   FCtrlList := TObjectList.Create(False);
   FSelectorList := TObjectList.Create;
@@ -933,8 +968,8 @@ end;
 procedure TCtrlSelectMgr.FillCtrlList;
 var
   idx : integer;
-  Ctrl : TComponent;
-  function IsControlTypeSelected(ACtrl : TComponent): Boolean;
+  Ctrl : TControl;
+  function IsControlTypeSelected(ACtrl : TControl): Boolean;
   var
     i : integer;
   begin
@@ -945,23 +980,39 @@ var
       if Result then Break;
     end;
   end;
+  function IsControlNameSelected(ACtrl : TControl): Boolean;
+  var
+    i : integer;
+  begin
+    Result := False;
+    for i:=0 to FControlNames.Count - 1 do
+    begin
+      Result := UpperCase(FControlNames.Names[i]) = UpperCase(ACtrl.Name);
+      if Result then Break;
+    end;
+  end;
 begin
   for idx := 0 to FOwnerForm.ComponentCount - 1 do
   begin
-    Ctrl := FOwnerForm.Components[idx] as TComponent;
-    if IsControlTypeSelected(Ctrl)
-       and
-       not IsControlReferred(Ctrl) then
+    if (FOwnerForm.Components[idx] is TControl) then
     begin
-      FCtrlList.Add(Ctrl);
+      Ctrl := FOwnerForm.Components[idx] as TControl;
+      if IsControlTypeSelected(Ctrl)
+         and
+         IsControlNameSelected(Ctrl)
+         and
+         not IsControlReferred(Ctrl) then
+      begin
+        FCtrlList.Add(Ctrl);
+      end;
     end;
   end;
   FCtrlParams.SetCtrlParams(FCtrlList);
   for idx := 0 to FOwnerForm.ComponentCount - 1 do
   begin
-    if (FOwnerForm.Components[idx] is TPanel) then
+    if (FOwnerForm.Components[idx] is TControl) then
     begin
-    	ActiveContainer(FOwnerForm.Components[idx] as TPanel);
+    	ActiveContainer(FOwnerForm.Components[idx]);
     end;
   end;
   FOriOwnerFormMouseDown := FOwnerForm.OnMouseDown;

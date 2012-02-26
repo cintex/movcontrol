@@ -1,8 +1,8 @@
-unit UCtrlTypesFrm;
+unit UControlsEditFrm;
 
 interface
 {-----------------------------------------------------------------------------------
-Controls types properties editor for movControl
+Controls types and names properties editor for movControl
 Copyright (C) 2012  Abdelhamid MEDDEB, abdelhamid@meddeb.net
 
 This program is free software: you can redistribute it and/or modify
@@ -28,7 +28,10 @@ uses
   Dialogs, StdCtrls;
 
 type
-  TCtrlTypeFrm = class(TForm)
+
+  TCtrlEdit = (ctedType, ctedName);
+
+  TControlsEditFrm = class(TForm)
     lstBoxUnselected: TListBox;
     lstBoxSelected: TListBox;
     btnOk: TButton;
@@ -45,13 +48,13 @@ type
     procedure btnSelectAllClick(Sender: TObject);
     procedure btnUnselectAllClick(Sender: TObject);
   private
-    { Private declarations }
+    FCtrlEdit : TCtrlEdit;
   public
-    { Public declarations }
+    procedure EditType(ACtrlEdit : TCtrlEdit);
   end;
 
 var
-  CtrlTypeFrm: TCtrlTypeFrm;
+  ControlsEditFrm: TControlsEditFrm;
 
 implementation
 
@@ -59,7 +62,7 @@ uses UTextRessources;
 
 {$R *.dfm}
 
-procedure TCtrlTypeFrm.btnSelectClick(Sender: TObject);
+procedure TControlsEditFrm.btnSelectClick(Sender: TObject);
 var
   idxSel : integer;
 begin
@@ -71,17 +74,14 @@ begin
   end;
 end;
 
-procedure TCtrlTypeFrm.FormShow(Sender: TObject);
+procedure TControlsEditFrm.FormShow(Sender: TObject);
 begin
-  lblUnselected.Caption := rsCtrlTypesPresent;
-  lblSelected.Caption := rsActiveCtrlTypes;
-  Caption := rsCtrlTypesEditorTitle;
 {$ifdef FRENCH}
   btnCancel.Caption := rsBtnCancel;
 {$endif}
 end;
 
-procedure TCtrlTypeFrm.btnUnselectClick(Sender: TObject);
+procedure TControlsEditFrm.btnUnselectClick(Sender: TObject);
 var
   idxSel : integer;
 begin
@@ -93,7 +93,7 @@ begin
   end;
 end;
 
-procedure TCtrlTypeFrm.btnSelectAllClick(Sender: TObject);
+procedure TControlsEditFrm.btnSelectAllClick(Sender: TObject);
 var
   i : integer;
 begin
@@ -104,7 +104,7 @@ begin
   end;
 end;
 
-procedure TCtrlTypeFrm.btnUnselectAllClick(Sender: TObject);
+procedure TControlsEditFrm.btnUnselectAllClick(Sender: TObject);
 var
   i : integer;
 begin
@@ -112,6 +112,23 @@ begin
   begin
     lstBoxUnselected.Items.Add(lstBoxSelected.Items[i]);
     lstBoxSelected.Items.Delete(i);
+  end;
+end;
+
+procedure TControlsEditFrm.EditType(ACtrlEdit: TCtrlEdit);
+begin
+  FCtrlEdit := ACtrlEdit;
+  case FCtrlEdit of
+    ctedType : begin
+                lblUnselected.Caption := rsCtrlTypesPresent;
+                lblSelected.Caption := rsActiveCtrlTypes;
+                Caption := rsCtrlTypesEditorTitle;
+               end;
+    ctedName:  begin
+                lblUnselected.Caption := rsCtrlNamesPresent;
+                lblSelected.Caption := rsActiveCtrlNames;
+                Caption := rsCtrlNamesEditorTitle;
+               end;
   end;
 end;
 

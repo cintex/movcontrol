@@ -29,7 +29,8 @@ uses
   Forms,
   {UToolsFrm,}
   UCtrlSelector,
-  UCtrlTypes;
+  UCtrlTypes,
+  UCtrlNames;
 
 type
 
@@ -45,6 +46,7 @@ type
     FShowTools : Boolean;
     FShowGrid : Boolean;
     FGridAlign : Boolean;
+    FControlNames : TControlNames;
     FControlTypes : TControlTypes;
     FKeyControl1 : TKeyControl;
     FKeyControl2 : TKeyControl;
@@ -58,6 +60,8 @@ type
     procedure SetOwnerForm;
     procedure ReadCtrlTypes(Reader : TReader);
     procedure WriteCtrlTypes(Writer : TWriter);
+    procedure ReadCtrlNames(Reader : TReader);
+    procedure WriteCtrlNames(Writer : TWriter);
     procedure OwnerFormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     function VKToKeyControl(const AVKKey : Word) : TKeyControl;
     procedure KeyActive(const AKey : Word; AShift : TShiftState);
@@ -76,6 +80,7 @@ type
     destructor Destroy; override;
   published
     property Active : Boolean read FActive write SetActive default True;
+    property ControlNames : TControlNames read FControlNames write FControlNames;
     property ControlTypes : TControlTypes read FControlTypes write FControlTypes;
     property KeyControl1 : TKeyControl read FKeyControl1 write SetKeyControl1 default kcNone;
     property KeyControl2 : TKeyControl read FKeyControl2 write SetKeyControl2 default kcNone;
@@ -87,6 +92,7 @@ implementation
 
 uses Windows,
      Dialogs,
+     SysUtils,
      UTextRessources;
 
 { TMovControl }
@@ -100,6 +106,7 @@ begin
   FShowTools := False;
   FShowGrid := False;
   FGridAlign := False;
+  FControlNames := TControlNames.Create(FOwnerForm);
   FControlTypes := TControlTypes.Create(FOwnerForm);
   if not (csDesigning in ComponentState) then
   begin
@@ -108,7 +115,7 @@ begin
       FPosGrid := TPosGrid.Create(FOwnerForm);
       FOriKeyDown := FOwnerForm.OnKeyDown;
       FOwnerForm.OnKeyDown := OwnerFormKeyDown;
-      FCtrlSelectMgr := TCtrlSelectMgr.Create(FOwnerForm, FControlTypes);
+      FCtrlSelectMgr := TCtrlSelectMgr.Create(FOwnerForm, FControlTypes, FControlNames);
       FOwnerForm.KeyPreview := True;
     end;
   end;
@@ -127,6 +134,7 @@ begin
     FCtrlSelectMgr.Free;
   end;
   FControlTypes.Free;
+  FControlNames.Free;
   inherited;
 end;
 
@@ -409,6 +417,7 @@ procedure TMovControl.DefineProperties(Filer: TFiler);
 begin
   inherited DefineProperties(Filer);
   Filer.DefineProperty('CtrlTypes', ReadCtrlTypes, WriteCtrlTypes, True);
+  Filer.DefineProperty('CtrlNames', ReadCtrlNames, WriteCtrlNames, True);
 end;
 
 procedure TMovControl.WriteCtrlTypes(Writer: TWriter);
@@ -432,6 +441,29 @@ begin
     FControlTypes.Add(Reader.ReadString);
   end;
   Reader.ReadListEnd;
+end;
+
+procedure TMovControl.ReadCtrlNames(Reader: TReader);
+begin
+  FControlNames.Clear;
+  Reader.ReadListBegin;
+  while not Reader.EndOfList do
+  begin
+    FControlNames.Add(Reader.ReadString);
+  end;
+  Reader.ReadListEnd;
+end;
+
+procedure TMovControl.WriteCtrlNames(Writer: TWriter);
+var
+  i: integer;
+begin
+  Writer.WriteListBegin;
+  for i:=0 to FControlNames.Count - 1 do
+  begin
+    Writer.WriteString(FControlNames.Names[i]);
+  end;
+  Writer.WriteListEnd;
 end;
 
 end.

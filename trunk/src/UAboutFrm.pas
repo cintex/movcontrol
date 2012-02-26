@@ -82,7 +82,8 @@ begin
     if VersionInfo.GetFileVersion(Application.ExeName) then
     begin
       lblVersion.Caption := 'Version ' + VersionInfo.ReleaseVersion;
-    end;  
+      lblVersion.Caption := 'Version 1.1.0';
+    end;
     {$ifdef FRENCH}
     btnClose.Caption := rsBtnClose;
     {$endif}
