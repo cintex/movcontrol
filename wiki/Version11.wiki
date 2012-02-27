@@ -4,7 +4,7 @@
 == Release date ==
 February 25, 2012.
 == Additional features ==
-Allows programmers to set the type of components to customize and / or specific components (selected by name).
+Allows programers to set the type of components to customize and / or specific components (selected by name).
 == Additional published properties ==
   # List of components types to customize. For example [TLabel, TEdit]
   # List of components name to customize
