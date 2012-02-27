@@ -2,7 +2,7 @@
 = Version 1.2 =
 
 == Release date ==
-About mid March 2012.
+About mid April 2012.
 == Additional features ==
 Provides tools who help final users in moving and re-dimensioning of the GUI components. Those tools are:
   * Grid that can be used to visualize the position of components.
