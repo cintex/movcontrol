@@ -1,5 +1,9 @@
 unit UAboutFrm;
 
+{$ifdef fpc}
+{$MODE Delphi}
+{$endif}
+
 interface
 {-----------------------------------------------------------------------------------
 About box
@@ -25,7 +29,7 @@ $Rev$
 
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  ExtCtrls, StdCtrls, jpeg;
+  ExtCtrls, StdCtrls;
 
 type
   TAboutFrm = class(TForm)
@@ -55,7 +59,11 @@ implementation
 
 uses UTextRessources, UVersionInfo;
 
-{$R *.DFM}
+{$ifdef fpc}
+{$R *.lfm}
+{$else}
+{$R *.dfm}
+{$endif}
 
 procedure TAboutFrm.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
@@ -92,4 +100,4 @@ begin
   end;
 end;
 
-end.
+end.

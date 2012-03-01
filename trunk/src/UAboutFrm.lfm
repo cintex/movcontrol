@@ -1,0 +1,198 @@
+object AboutFrm: TAboutFrm
+  Left = 383
+  Top = 149
+  BorderStyle = bsDialog
+  Caption = 'About'
+  ClientHeight = 181
+  ClientWidth = 353
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'MS Sans Serif'
+  Font.Style = []
+  Position = poScreenCenter
+  OnClose = FormClose
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  object lblAbout1: TLabel
+    Left = 10
+    Top = 72
+    Width = 45
+    Height = 14
+    Caption = 'lblAbout1'
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'Arial'
+    Font.Style = []
+    ParentFont = False
+  end
+  object lblAbout2: TLabel
+    Left = 10
+    Top = 87
+    Width = 45
+    Height = 14
+    Caption = 'lblAbout2'
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'Arial'
+    Font.Style = []
+    ParentFont = False
+  end
+  object lblAbout3: TLabel
+    Left = 10
+    Top = 102
+    Width = 45
+    Height = 14
+    Caption = 'lblAbout3'
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'Arial'
+    Font.Style = []
+    ParentFont = False
+  end
+  object lblAbout4: TLabel
+    Left = 10
+    Top = 127
+    Width = 45
+    Height = 14
+    Caption = 'lblAbout4'
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'Arial'
+    Font.Style = []
+    ParentFont = False
+  end
+  object lblAbout5: TLabel
+    Left = 10
+    Top = 142
+    Width = 45
+    Height = 14
+    Caption = 'lblAbout5'
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'Arial'
+    Font.Style = []
+    ParentFont = False
+  end
+  object lblAbout6: TLabel
+    Left = 10
+    Top = 157
+    Width = 45
+    Height = 14
+    Caption = 'lblAbout6'
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'Arial'
+    Font.Style = []
+    ParentFont = False
+  end
+  object btnClose: TButton
+    Left = 274
+    Top = 150
+    Width = 75
+    Height = 25
+    Anchors = [akRight, akBottom]
+    Caption = '&Close'
+    TabOrder = 0
+    OnClick = btnCloseClick
+  end
+  object pnlLeft: TPanel
+    Left = 8
+    Top = 8
+    Width = 337
+    Height = 57
+    Anchors = [akLeft, akTop, akRight]
+    BevelOuter = bvLowered
+    TabOrder = 1
+    object lblTitle: TLabel
+      Left = 70
+      Top = 6
+      Width = 241
+      Height = 18
+      Caption = 'TMovControl component for Delphi'#8482'.'
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -15
+      Font.Name = 'Times New Roman'
+      Font.Style = [fsBold, fsItalic]
+      ParentFont = False
+    end
+    object Image1: TImage
+      Left = 1
+      Top = 1
+      Width = 48
+      Height = 48
+      AutoSize = True
+      Picture.Data = {
+        0A544A504547496D616765AA040000FFD8FFE000104A46494600010101004800
+        480000FFDB0043000503040404030504040405050506070C08070707070F0B0B
+        090C110F1212110F111113161C1713141A1511111821181A1D1D1F1F1F131722
+        24221E241C1E1F1EFFDB0043010505050706070E08080E1E1411141E1E1E1E1E
+        1E1E1E1E1E1E1E1E1E1E1E1E1E1E1E1E1E1E1E1E1E1E1E1E1E1E1E1E1E1E1E1E
+        1E1E1E1E1E1E1E1E1E1E1E1E1EFFC00011080030003003012200021101031101
+        FFC4001B00000203010101000000000000000000000206030405070108FFC400
+        3210000104000503020306070000000000000102030411000512213106134114
+        5122328107156191B1D1174352627192F0FFC400190100020301000000000000
+        000000000000010200040503FFC4002611000104010303040300000000000000
+        0001000203113104122141517113C1D1E10561F0FFDA000C0301000211031100
+        3F00FA65988EBAD07125B4A09AB52AB0620ACFF3D8FF007C4B974754C6832992
+        EC72972F5B6124D029253F10228F07CFB56193D3B5EC31144919DFA9CBA1890D
+        30A9A4AC24A23A4B8A4820FC540591B01B7BE1724E79D43DB4AA274BE60B27E6
+        EE33A2B635CA85F8C75AF4ED7B0C03F15A7185B66D214922D06942FC82383804
+        58A09E378638388B1D8FD24D4F7121B43C909754CA1C5A41B0926C14FD08382C
+        1CD8E88729B612B5AC06F402B56A5108D3B93E4FC580C14A792ACE5CFF00A625
+        44FCCE2ABFC694FEC71A9F798FEAC25E759BC280029E74FC2A00848B3E7F6C7B
+        9566BF7AC64C8CBD0A71B2B29B51038167827F01587F4DDB77D71DD73F519BB6
+        5F3DBAA6F7B3965900BAFA1B04D0D4A02CD5FE80FE581919DC68FB3F25B6EC12
+        02940120738E51F6C4DBF1725879EAA58CBE665CF131DC53FA10E1583A993C12
+        54945D8AA239ABB9BA3FA8E04DE9A4E6AE943822472A614B1AA86D7AA86FA78F
+        ADD7181A71BF50D8A4040760F723A7954F51AC3138B78FECDFB2614E793664F7
+        243F1D94301B5161B49577093A7724EDA761C62E64D31D9F973729E8DE996BBB
+        6F5EB028FBED7F9631E2F50CF932A1B0F204B8B21B2F39312AB6985000A5344D
+        92ABBADB61B1E462CF732D7F378AB2E4A4BCDF7161E6CA9861C5A955A1480694
+        A0280B078BBBC694CC8642E646CA23A8B238F9EE9627CAC0D73DD60F819F8507
+        5164CFBF2152A10577169D2749008E77E46FBF8F6C58197BCAE8D19730630794
+        53DD692DF6E811652BBBD4AE2CFF00C76942C11BEFED8C49392CD21E1133771A
+        0E24E90EB7DC0959AF8B917B0AAC67091C0000E15B769E371248C8A3E143222B
+        937A60655984784FA9234A152529586D1C0502536935C1ABFD718917A5B29C82
+        2359BC274466D485B7210DBA6A585116A48A34001F30AB1EE68E349CC9A6474B
+        E244D9139520821B4300349AF039206C09B35CE0F39E93566EDDC9CDA6C770A4
+        03D95ED43C6E280FC3EBCE1D927203C9ABBFB1FB48FD3B08B6B46E18F6541799
+        42CAA348538B8A86EF5957712541237D3FDA3DC9F188FA54319E666BF590A438
+        18D325B90090C955EC01E147CED63DF153F87119E8CAC9E43D2C434A121A78A9
+        2E28806F4EE2856D5638DBC61CBA73228190404C3801DEDA7CB8BD4AFCF1AB27
+        E4208E0D9A76904E4E2BC66ED52668657CDBE636063ADAFFD9}
+    end
+    object lblSubTitle: TLabel
+      Left = 70
+      Top = 30
+      Width = 3
+      Height = 16
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -13
+      Font.Name = 'Times New Roman'
+      Font.Style = [fsBold, fsItalic]
+      ParentFont = False
+    end
+    object lblVersion: TLabel
+      Left = 253
+      Top = 30
+      Width = 3
+      Height = 16
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -13
+      Font.Name = 'Times New Roman'
+      Font.Style = [fsBold, fsItalic]
+      ParentFont = False
+    end
+  end
+end

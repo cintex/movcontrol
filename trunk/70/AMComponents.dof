@@ -111,7 +111,7 @@ AutoIncBuild=1
 MajorVer=1
 MinorVer=1
 Release=0
-Build=141
+Build=144
 Debug=0
 PreRelease=0
 Special=0
@@ -122,7 +122,7 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=AM (Abdelhamid MEDDEB)
 FileDescription=AM Delphi Components
-FileVersion=1.1.0.141
+FileVersion=1.1.0.144
 InternalName=AMComponents
 LegalCopyright=Abdelhamid MEDDEB
 LegalTrademarks=
@@ -135,8 +135,8 @@ Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
 [HistoryLists\hlSearchPath]
 Count=2
-Item0=src
-Item1=..\src
+Item0=..\src
+Item1=src
 [HistoryLists\hlUnitOutputDirectory]
 Count=1
 Item0=bin

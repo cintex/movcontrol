@@ -1,5 +1,9 @@
 unit UVersionInfo;
 
+{$ifdef fpc}
+{$MODE Delphi}
+{$endif}
+
 interface
 {-----------------------------------------------------------------------------------
 Read version information from binary file
@@ -50,7 +54,9 @@ type
 
 implementation
 
+{$ifndef fpc}
 {$I UDelphiVersions.inc}
+{$endif}
 
 {********************************************************************
 Function    : Create
@@ -123,8 +129,12 @@ function TFileVersion.ReadVersionInfo(sProgram: string; Major, Minor,
                                         Release, Build : pWord) :Boolean;
 var
   Info:       PVSFixedFileInfo;
-{$ifdef D5_ORHIGHER} {Delphi 4 definition for this differs from D2 & D3}
+{$ifndef fpc}
+ {$ifdef D5_ORHIGHER} {Delphi 4 definition for this differs from D2 & D3}
   InfoSize:   Cardinal;
+ {$else}
+  InfoSize:   UINT;
+ {$endif}
 {$else}
   InfoSize:   UINT;
 {$endif}
@@ -168,4 +178,4 @@ begin
 end;
 end.
 
-
+

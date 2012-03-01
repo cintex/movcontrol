@@ -1,5 +1,9 @@
 unit UToolsFrm;
 
+{$ifdef fpc}
+{$MODE Delphi}
+{$endif}
+
 interface
 {-----------------------------------------------------------------------------------
 movControl component properties editor
@@ -56,7 +60,11 @@ var
 
 implementation
 
+{$ifdef fpc}
+{$R *.lfm}
+{$else}
 {$R *.dfm}
+{$endif}
 
 procedure TToolsFrm.sbAnchorMouseDown(Sender: TObject;
   Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
@@ -95,4 +103,6 @@ begin
 end;
 
 end.
-
+
+
+
