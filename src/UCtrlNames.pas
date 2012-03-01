@@ -1,5 +1,9 @@
 unit UCtrlNames;
 
+{$ifdef fpc}
+{$MODE Delphi}
+{$endif}
+
 interface
 {-----------------------------------------------------------------------------------
 Manager of Control names used by movControl

@@ -1,5 +1,9 @@
 unit UControlsEditFrm;
 
+{$ifdef fpc}
+{$MODE Delphi}
+{$endif}
+
 interface
 {-----------------------------------------------------------------------------------
 Controls types and names properties editor for movControl
@@ -60,7 +64,11 @@ implementation
 
 uses UTextRessources;
 
+{$ifdef fpc}
+{$R *.lfm}
+{$else}
 {$R *.dfm}
+{$endif}
 
 procedure TControlsEditFrm.btnSelectClick(Sender: TObject);
 var

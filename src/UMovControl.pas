@@ -1,5 +1,9 @@
 unit UMovControl;
 
+{$ifdef fpc}
+{$MODE Delphi}
+{$endif}
+
 interface
 {-----------------------------------------------------------------------------------
 movControl component core

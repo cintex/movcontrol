@@ -1,5 +1,9 @@
 unit UCtrlSelector;
 
+{$ifdef fpc}
+{$MODE Delphi}
+{$endif}
+
 interface
 {-----------------------------------------------------------------------------------
 Controls selection tools
@@ -33,6 +37,9 @@ uses ExtCtrls,
      Controls,
      UCtrlTypes,
      UCtrlNames;
+{$ifdef fpc}
+{$M+}
+{$endif}
 
 type
 
@@ -199,6 +206,9 @@ uses Graphics,
      StdCtrls,
      ComCtrls,
      FileCtrl,
+   {$ifdef fpc}
+     fileutil,
+   {$endif}  
      IniFiles,
      typinfo,
      SysUtils;
@@ -686,7 +696,11 @@ begin
       Result := Concat(Result, '\', ChangeFileExt(ExtractFileName(Application.ExeName), ''), '\');
     end
     else Result := Concat(Result, ChangeFileExt(ExtractFileName(Application.ExeName), ''), '\');
+    {$ifdef fpc}
+    if not DirectoryExistsUTF8(Result) then CreateDirUTF8(Result);
+    {$else}
     if not DirectoryExists(Result) then CreateDir(Result);
+    {$endif}
   finally
     Registry.Free;
     StrDispose(Buffer);

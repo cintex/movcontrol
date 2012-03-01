@@ -1,5 +1,9 @@
 unit UProperties;
 
+{$ifdef fpc}
+{$MODE Delphi}
+{$endif}
+
 interface
 {-----------------------------------------------------------------------------------
 movControl component properties editor
@@ -22,14 +26,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 $Id$
 $Rev$
 -------------------------------------------------------------------------------------}
-
+{$ifndef fpc}
 {$I UDelphiVersions.inc}
+{$endif}
 
-uses Classes, Forms,
-     {$ifdef D6_ORHIGHER} DesignIntf, DesignEditors
-     {$else} DsgnIntf
+uses Forms,
+     {$ifdef fpc}
+     PropEdits,
+     ComponentEditors,
+     {$else}
+       {$ifdef D6_ORHIGHER}
+       DesignIntf,
+       DesignEditors,
+       {$else}
+       DsgnIntf,
+       {$endif}
      {$endif}
-      ;
+     Classes;
 
 type
   TMovControlProperty = class(TComponentEditor)

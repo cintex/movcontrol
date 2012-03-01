@@ -1,5 +1,9 @@
 unit UCtrlTypes;
 
+{$ifdef fpc}
+{$MODE Delphi}
+{$endif}
+
 interface
 {-----------------------------------------------------------------------------------
 Manager of Control types used by movControl

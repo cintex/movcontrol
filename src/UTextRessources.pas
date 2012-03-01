@@ -1,5 +1,9 @@
 unit UTextRessources;
 
+{$ifdef fpc}
+{$MODE Delphi}
+{$endif}
+
 interface
 {-----------------------------------------------------------------------------------
 resource strings
@@ -68,4 +72,5 @@ resourcestring
 
 implementation
 
-end.
+end.
+
